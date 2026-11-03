@@ -1,0 +1,3 @@
+{"elapsed":1.00066,"interval_seconds":1.00066,"fps":[9.99345,9.99345],"interval_p95_ms":3.57211,"detector_total_fps":19.9869,"current_tracks":25,"mosaic_frames":0}
+{"elapsed":2.00859,"interval_seconds":1.00793,"fps":[9.92132,9.92132],"interval_p95_ms":3.38964,"detector_total_fps":19.8426,"current_tracks":22,"mosaic_frames":0}
+{"elapsed":3,"interval_seconds":0.991415,"fps":[10.0866,10.0866],"interval_p95_ms":3.30267,"detector_total_fps":20.1732,"current_tracks":25,"mosaic_frames":0}

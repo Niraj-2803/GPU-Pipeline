@@ -1,0 +1,9 @@
+
+# Dataset and source videos
+*.mp4
+*.mkv
+*.avi
+*.mov
+*.webm
+*.mpeg
+*.mpg

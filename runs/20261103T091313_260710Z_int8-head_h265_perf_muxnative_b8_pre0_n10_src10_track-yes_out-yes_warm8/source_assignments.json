@@ -1,0 +1,162 @@
+[
+  {
+    "stream_id": 1,
+    "camera_id": "C01",
+    "replica": 1,
+    "area": "CHECK-IN",
+    "description": "Check-in queue approach 1",
+    "path": "/media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/source_profiles/h265/C01.mp4",
+    "uri": "file:///work/source_profiles/h265/C01.mp4",
+    "expected_sha256": "b10a91d59cde5780a98211f423c0efe65c8fcf6a8c4c73f34afd456dc684fa7b",
+    "probe": {
+      "codec_name": "hevc",
+      "width": 2560,
+      "height": 1440,
+      "avg_frame_rate": "10/1"
+    }
+  },
+  {
+    "stream_id": 2,
+    "camera_id": "C02",
+    "replica": 1,
+    "area": "CHECK-IN",
+    "description": "Check-in queue approach 2",
+    "path": "/media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/source_profiles/h265/C02.mp4",
+    "uri": "file:///work/source_profiles/h265/C02.mp4",
+    "expected_sha256": "1ff85ae6c36e9c4c77a2065384e26f90ba03ddb1ba32a9f35213a112b2e58fef",
+    "probe": {
+      "codec_name": "hevc",
+      "width": 2560,
+      "height": 1440,
+      "avg_frame_rate": "10/1"
+    }
+  },
+  {
+    "stream_id": 3,
+    "camera_id": "C03",
+    "replica": 1,
+    "area": "CHECK-IN",
+    "description": "Check-in queue approach 3",
+    "path": "/media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/source_profiles/h265/C03.mp4",
+    "uri": "file:///work/source_profiles/h265/C03.mp4",
+    "expected_sha256": "e51aab24b86924c78a486600757c54d13bf0b2d6a72b3ce593ad6dd7b8792c3a",
+    "probe": {
+      "codec_name": "hevc",
+      "width": 2560,
+      "height": 1440,
+      "avg_frame_rate": "10/1"
+    }
+  },
+  {
+    "stream_id": 4,
+    "camera_id": "C04",
+    "replica": 1,
+    "area": "CHECK-IN",
+    "description": "Check-in queue approach 4",
+    "path": "/media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/source_profiles/h265/C04.mp4",
+    "uri": "file:///work/source_profiles/h265/C04.mp4",
+    "expected_sha256": "f5452d3f93e3fb4db71e273e482abfce93791ae586fb6fde1434834d3b8f5707",
+    "probe": {
+      "codec_name": "hevc",
+      "width": 2560,
+      "height": 1440,
+      "avg_frame_rate": "10/1"
+    }
+  },
+  {
+    "stream_id": 5,
+    "camera_id": "C05",
+    "replica": 1,
+    "area": "CHECK-IN",
+    "description": "Check-in counter 1",
+    "path": "/media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/source_profiles/h265/C05.mp4",
+    "uri": "file:///work/source_profiles/h265/C05.mp4",
+    "expected_sha256": "b35520e8bd59c31ce0f10bbf36983ec9321472ba936e5fd1b304e3a80d88e3a5",
+    "probe": {
+      "codec_name": "hevc",
+      "width": 2560,
+      "height": 1440,
+      "avg_frame_rate": "10/1"
+    }
+  },
+  {
+    "stream_id": 6,
+    "camera_id": "C06",
+    "replica": 1,
+    "area": "CHECK-IN",
+    "description": "Check-in counter 2",
+    "path": "/media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/source_profiles/h265/C06.mp4",
+    "uri": "file:///work/source_profiles/h265/C06.mp4",
+    "expected_sha256": "0e51b6e1b8d26e36fab2b753c3debde025fccc26df260c3035bdf5e9b2763f94",
+    "probe": {
+      "codec_name": "hevc",
+      "width": 2560,
+      "height": 1440,
+      "avg_frame_rate": "10/1"
+    }
+  },
+  {
+    "stream_id": 7,
+    "camera_id": "C07",
+    "replica": 1,
+    "area": "CHECK-IN",
+    "description": "Check-in counter 3",
+    "path": "/media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/source_profiles/h265/C07.mp4",
+    "uri": "file:///work/source_profiles/h265/C07.mp4",
+    "expected_sha256": "373ae995565c6e6d3841d0357e023bb7429a278d7f1f77852eee2142143198b2",
+    "probe": {
+      "codec_name": "hevc",
+      "width": 2560,
+      "height": 1440,
+      "avg_frame_rate": "10/1"
+    }
+  },
+  {
+    "stream_id": 8,
+    "camera_id": "C08",
+    "replica": 1,
+    "area": "CHECK-IN",
+    "description": "Check-in counter 4",
+    "path": "/media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/source_profiles/h265/C08.mp4",
+    "uri": "file:///work/source_profiles/h265/C08.mp4",
+    "expected_sha256": "5ca6885bc8724a2d91f3b0eb63247b6c6bf2fc8d6473bb77e9ea2f7f70f9d7fd",
+    "probe": {
+      "codec_name": "hevc",
+      "width": 2560,
+      "height": 1440,
+      "avg_frame_rate": "10/1"
+    }
+  },
+  {
+    "stream_id": 9,
+    "camera_id": "C09",
+    "replica": 1,
+    "area": "CHECK-IN",
+    "description": "Check-in exit and transfer",
+    "path": "/media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/source_profiles/h265/C09.mp4",
+    "uri": "file:///work/source_profiles/h265/C09.mp4",
+    "expected_sha256": "e8b04e9ad3e2c21d449f4a718265f615743eef34dda45ae65c946228ef2c21e5",
+    "probe": {
+      "codec_name": "hevc",
+      "width": 2560,
+      "height": 1440,
+      "avg_frame_rate": "10/1"
+    }
+  },
+  {
+    "stream_id": 10,
+    "camera_id": "C10",
+    "replica": 1,
+    "area": "CHECK-IN",
+    "description": "Reception crosswalk",
+    "path": "/media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/source_profiles/h265/C10.mp4",
+    "uri": "file:///work/source_profiles/h265/C10.mp4",
+    "expected_sha256": "259317b0c51abd4122ab0f373a1ffb593878c0cbddf12d88b7cc5c7272ebf14e",
+    "probe": {
+      "codec_name": "hevc",
+      "width": 2560,
+      "height": 1440,
+      "avg_frame_rate": "10/1"
+    }
+  }
+]

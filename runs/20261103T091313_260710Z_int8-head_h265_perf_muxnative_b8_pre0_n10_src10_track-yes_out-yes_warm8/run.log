@@ -1,0 +1,50 @@
+VIDEO 3840x1620 grid=4x3 target=5 mosaic FPS; AI target=10 FPS; person track IDs and stable colours
+Failed to query video capabilities: Invalid argument
+START 10 independent decoders | input=2560x1440 | mux=2560x1440 | analysis=640x640 | detector batch=8 | stream capacity=10 | tracker=NvDCF 640x384 | output=yes | timed window=10s
+gstnvtracker: Loading low-level lib at /opt/nvidia/deepstream/deepstream/lib/libnvds_nvmultiobjecttracker.so
+[NvMultiObjectTracker] Initialized
+0:00:00.247028051 [32m  121[00m 0x632b8d9c55f0 [36mINFO   [00m [00m             nvinfer gstnvinfer.cpp:684:gst_nvinfer_logger:<nvinfer0>[00m NvDsInferContext[UID 1]: Info from NvDsInferContextImpl::deserializeEngineAndBackend() <nvdsinfer_context_impl.cpp:2092> [UID = 1]: deserialized trt engine from :/work/models/yolov8s-int8-head-b16.engine
+0:00:00.247066884 [32m  121[00m 0x632b8d9c55f0 [36mINFO   [00m [00m             nvinfer gstnvinfer.cpp:684:gst_nvinfer_logger:<nvinfer0>[00m NvDsInferContext[UID 1]: Info from NvDsInferContextImpl::generateBackendContext() <nvdsinfer_context_impl.cpp:2195> [UID = 1]: Use deserialized engine model: /work/models/yolov8s-int8-head-b16.engine
+0:00:00.254971542 [32m  121[00m 0x632b8d9c55f0 [36mINFO   [00m [00m             nvinfer gstnvinfer_impl.cpp:343:notifyLoadModelStatus:<nvinfer0>[00m [UID 1]: Load new model:/work/runs/20261103T091313_260710Z_int8-head_h265_perf_muxnative_b8_pre0_n10_src10_track-yes_out-yes_warm8/infer.txt sucessfully
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+WARNING: [TRT]: Using an engine plan file across different models of devices is not recommended and is likely to affect performance or even cause errors.
+INFO: ../nvdsinfer/nvdsinfer_model_builder.cpp:327 [FullDims Engine Info]: layers num: 2
+0   INPUT  kFLOAT input           3x640x640       min: 1x3x640x640     opt: 8x3x640x640     Max: 16x3x640x640    
+1   OUTPUT kFLOAT output          8400x6          min: 0               opt: 0               Max: 0               
+
+SOURCE START all 10 decoders ready after 0.687603s; common file-playback epoch=0.554697s
+READY all 10 sources producing output; warming up for 8 seconds
+WARMUP remaining=8s
+WARMUP remaining=3s
+FPS  1.0/10.0s | det+track=99.9 | per stream min/avg/max=10.0/10.0/10.0 | active=10/10 | cumulative P95=7.2ms | interval P95=7.2ms | detector=99.9 FPS | tracks=139 | mosaic=5.0 FPS
+FPS  2.0/10.0s | det+track=99.3 | per stream min/avg/max=9.9/9.9/9.9 | active=10/10 | cumulative P95=7.9ms | interval P95=8.2ms | detector=99.3 FPS | tracks=139 | mosaic=5.0 FPS
+FPS  3.0/10.0s | det+track=99.4 | per stream min/avg/max=9.9/9.9/9.9 | active=10/10 | cumulative P95=8.2ms | interval P95=8.3ms | detector=99.4 FPS | tracks=138 | mosaic=5.0 FPS
+FPS  4.0/10.0s | det+track=99.3 | per stream min/avg/max=9.9/9.9/9.9 | active=10/10 | cumulative P95=8.2ms | interval P95=9.0ms | detector=99.3 FPS | tracks=138 | mosaic=5.0 FPS
+FPS  5.0/10.0s | det+track=99.4 | per stream min/avg/max=9.9/9.9/9.9 | active=10/10 | cumulative P95=8.2ms | interval P95=7.0ms | detector=99.4 FPS | tracks=138 | mosaic=5.0 FPS
+FPS  6.0/10.0s | det+track=99.2 | per stream min/avg/max=9.9/9.9/9.9 | active=10/10 | cumulative P95=8.0ms | interval P95=7.0ms | detector=99.2 FPS | tracks=143 | mosaic=5.0 FPS
+FPS  7.0/10.0s | det+track=99.1 | per stream min/avg/max=9.9/9.9/9.9 | active=10/10 | cumulative P95=8.0ms | interval P95=7.9ms | detector=99.1 FPS | tracks=134 | mosaic=5.0 FPS
+FPS  8.1/10.0s | det+track=99.0 | per stream min/avg/max=9.9/9.9/9.9 | active=10/10 | cumulative P95=8.0ms | interval P95=8.3ms | detector=99.0 FPS | tracks=145 | mosaic=5.0 FPS
+FPS  9.1/10.0s | det+track=99.1 | per stream min/avg/max=9.9/9.9/9.9 | active=10/10 | cumulative P95=8.2ms | interval P95=8.2ms | detector=99.1 FPS | tracks=141 | mosaic=5.0 FPS
+FPS 10.0/10.0s | det+track=106.7 | per stream min/avg/max=10.7/10.7/10.7 | active=10/10 | cumulative P95=8.2ms | interval P95=8.5ms | detector=106.7 FPS | tracks=141 | mosaic=5.3 FPS
+FINISH measurement stopped; finalizing output
+nvstreammux: Successfully handled EOS for source_id=4
+nvstreammux: Successfully handled EOS for source_id=8
+nvstreammux: Successfully handled EOS for source_id=5
+nvstreammux: Successfully handled EOS for source_id=7
+nvstreammux: Successfully handled EOS for source_id=6
+nvstreammux: Successfully handled EOS for source_id=2
+nvstreammux: Successfully handled EOS for source_id=0
+nvstreammux: Successfully handled EOS for source_id=1
+nvstreammux: Successfully handled EOS for source_id=9
+nvstreammux: Successfully handled EOS for source_id=3
+RESULT total=100.0 FPS | minimum=10.0 FPS | P95=8.2ms | mosaic frames=50
+[NvMultiObjectTracker] De-initialized

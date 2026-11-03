@@ -1,0 +1,197 @@
+START 150 independent decoders | input=2560x1440 | mux=2560x1440 | analysis=640x640 | detector batch=8 | stream capacity=150 | tracker=NvDCF 640x384 | output=no | timed window=30s
+gstnvtracker: Loading low-level lib at /opt/nvidia/deepstream/deepstream/lib/libnvds_nvmultiobjecttracker.so
+[NvMultiObjectTracker] Initialized
+0:00:00.909145400 [34m 9561[00m 0x5b9207c46b70 [36mINFO   [00m [00m             nvinfer gstnvinfer.cpp:684:gst_nvinfer_logger:<nvinfer0>[00m NvDsInferContext[UID 1]: Info from NvDsInferContextImpl::deserializeEngineAndBackend() <nvdsinfer_context_impl.cpp:2092> [UID = 1]: deserialized trt engine from :/work/models/yolov8s-int8-head-b16.engine
+0:00:00.909180442 [34m 9561[00m 0x5b9207c46b70 [36mINFO   [00m [00m             nvinfer gstnvinfer.cpp:684:gst_nvinfer_logger:<nvinfer0>[00m NvDsInferContext[UID 1]: Info from NvDsInferContextImpl::generateBackendContext() <nvdsinfer_context_impl.cpp:2195> [UID = 1]: Use deserialized engine model: /work/models/yolov8s-int8-head-b16.engine
+0:00:00.915850502 [34m 9561[00m 0x5b9207c46b70 [36mINFO   [00m [00m             nvinfer gstnvinfer_impl.cpp:343:notifyLoadModelStatus:<nvinfer0>[00m [UID 1]: Load new model:/work/runs/20261015T150915_209152Z_int8-head_h265_perf_muxnative_b8_pre0_n150_src10_track-yes_out-no_warm8/infer.txt sucessfully
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+INFO: ../nvdsinfer/nvdsinfer_model_builder.cpp:327 [FullDims Engine Info]: layers num: 2
+0   INPUT  kFLOAT input           3x640x640       min: 1x3x640x640     opt: 8x3x640x640     Max: 16x3x640x640    
+1   OUTPUT kFLOAT output          8400x6          min: 0               opt: 0               Max: 0               
+
+SOURCE START all 150 decoders ready after 5.2063s; common file-playback epoch=4.26082s
+READY all 150 sources producing output; warming up for 8 seconds
+WARMUP remaining=8s
+WARMUP remaining=3s
+FPS  1.0/30.0s | det+track=1476.4 | per stream min/avg/max=9.8/9.8/9.8 | active=150/150 | cumulative P95=59.3ms | interval P95=59.3ms | detector=1476.4 FPS | tracks=1710
+FPS  2.0/30.0s | det+track=1494.7 | per stream min/avg/max=10.0/10.0/10.0 | active=150/150 | cumulative P95=57.2ms | interval P95=55.8ms | detector=1494.7 FPS | tracks=1764
+FPS  3.0/30.0s | det+track=1492.7 | per stream min/avg/max=10.0/10.0/10.0 | active=150/150 | cumulative P95=58.6ms | interval P95=58.6ms | detector=1641.9 FPS | tracks=1758
+FPS  4.0/30.0s | det+track=1491.1 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.1ms | interval P95=58.1ms | detector=1491.1 FPS | tracks=1749
+FPS  5.0/30.0s | det+track=1640.6 | per stream min/avg/max=10.9/10.9/10.9 | active=150/150 | cumulative P95=58.1ms | interval P95=55.3ms | detector=1491.4 FPS | tracks=1815
+FPS  6.0/30.0s | det+track=1493.3 | per stream min/avg/max=10.0/10.0/10.0 | active=150/150 | cumulative P95=57.4ms | interval P95=57.1ms | detector=1493.3 FPS | tracks=1809
+FPS  7.0/30.0s | det+track=1492.2 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=57.8ms | interval P95=57.8ms | detector=1492.2 FPS | tracks=1824
+FPS  8.1/30.0s | det+track=1492.0 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=57.5ms | interval P95=57.5ms | detector=1492.0 FPS | tracks=1787
+FPS  9.1/30.0s | det+track=1490.1 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.1ms | interval P95=59.0ms | detector=1490.1 FPS | tracks=1836
+FPS 10.1/30.0s | det+track=1489.5 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.1ms | interval P95=60.1ms | detector=1489.5 FPS | tracks=1825
+FPS 11.1/30.0s | det+track=1491.1 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.6ms | interval P95=58.9ms | detector=1491.1 FPS | tracks=1779
+FPS 12.1/30.0s | det+track=1491.5 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.7ms | interval P95=59.3ms | detector=1491.5 FPS | tracks=1785
+FPS 13.1/30.0s | det+track=1486.6 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.6ms | interval P95=57.3ms | detector=1486.6 FPS | tracks=1716
+FPS 14.1/30.0s | det+track=1484.5 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.6ms | interval P95=57.3ms | detector=1484.5 FPS | tracks=1740
+FPS 15.1/30.0s | det+track=1491.6 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.1ms | interval P95=57.8ms | detector=1491.6 FPS | tracks=1776
+FPS 16.1/30.0s | det+track=1489.5 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.1ms | interval P95=58.1ms | detector=1489.5 FPS | tracks=1755
+FPS 17.1/30.0s | det+track=1490.4 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.1ms | interval P95=58.0ms | detector=1490.4 FPS | tracks=1743
+FPS 18.1/30.0s | det+track=1490.5 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.1ms | interval P95=59.0ms | detector=1490.5 FPS | tracks=1740
+FPS 19.1/30.0s | det+track=1492.1 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.6ms | interval P95=61.4ms | detector=1641.3 FPS | tracks=1765
+FPS 20.1/30.0s | det+track=1488.2 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.9ms | interval P95=59.3ms | detector=1488.2 FPS | tracks=1821
+FPS 21.1/30.0s | det+track=1639.6 | per stream min/avg/max=10.9/10.9/10.9 | active=150/150 | cumulative P95=58.9ms | interval P95=59.0ms | detector=1490.5 FPS | tracks=1821
+FPS 22.1/30.0s | det+track=1494.4 | per stream min/avg/max=10.0/10.0/10.0 | active=150/150 | cumulative P95=58.9ms | interval P95=58.2ms | detector=1494.4 FPS | tracks=1824
+FPS 23.2/30.0s | det+track=1491.6 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.9ms | interval P95=60.0ms | detector=1491.6 FPS | tracks=1842
+FPS 24.2/30.0s | det+track=1492.7 | per stream min/avg/max=10.0/10.0/10.0 | active=150/150 | cumulative P95=58.9ms | interval P95=57.0ms | detector=1492.7 FPS | tracks=1836
+FPS 25.2/30.0s | det+track=1490.8 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.9ms | interval P95=58.2ms | detector=1490.8 FPS | tracks=1782
+FPS 26.2/30.0s | det+track=1492.3 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.9ms | interval P95=59.2ms | detector=1492.3 FPS | tracks=1731
+FPS 27.2/30.0s | det+track=1489.8 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=59.0ms | interval P95=74.8ms | detector=1489.8 FPS | tracks=1728
+FPS 28.2/30.0s | det+track=1493.5 | per stream min/avg/max=10.0/10.0/10.0 | active=150/150 | cumulative P95=59.0ms | interval P95=57.4ms | detector=1493.5 FPS | tracks=1815
+FPS 29.2/30.0s | det+track=1489.2 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=59.0ms | interval P95=61.5ms | detector=1489.2 FPS | tracks=1750
+FPS 30.0/30.0s | det+track=1472.6 | per stream min/avg/max=9.8/9.8/9.8 | active=150/150 | cumulative P95=59.0ms | interval P95=57.1ms | detector=1472.6 FPS | tracks=1698
+FINISH measurement stopped; finalizing output
+RESULT total=1500.0 FPS | minimum=10.0 FPS | P95=59.0ms | mosaic frames=0
+[NvMultiObjectTracker] De-initialized

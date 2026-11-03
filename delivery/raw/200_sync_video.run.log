@@ -1,0 +1,429 @@
+VIDEO 3840x2016 grid=15x14 target=10 mosaic FPS; person track IDs and stable colours
+START 200 independent decoders | input=2560x1440 | mux=2560x1440 | analysis=640x640 | detector batch=8 | stream capacity=200 | tracker=NvDCF 640x384 | output=yes | timed window=10s
+Failed to query video capabilities: Invalid argument
+gstnvtracker: Loading low-level lib at /opt/nvidia/deepstream/deepstream/lib/libnvds_nvmultiobjecttracker.so
+[NvMultiObjectTracker] Initialized
+0:00:01.150429722 [34m12597[00m 0x58c2d79df890 [36mINFO   [00m [00m             nvinfer gstnvinfer.cpp:684:gst_nvinfer_logger:<nvinfer0>[00m NvDsInferContext[UID 1]: Info from NvDsInferContextImpl::deserializeEngineAndBackend() <nvdsinfer_context_impl.cpp:2092> [UID = 1]: deserialized trt engine from :/work/models/yolov8s-int8-head-b16.engine
+0:00:01.150465733 [34m12597[00m 0x58c2d79df890 [36mINFO   [00m [00m             nvinfer gstnvinfer.cpp:684:gst_nvinfer_logger:<nvinfer0>[00m NvDsInferContext[UID 1]: Info from NvDsInferContextImpl::generateBackendContext() <nvdsinfer_context_impl.cpp:2195> [UID = 1]: Use deserialized engine model: /work/models/yolov8s-int8-head-b16.engine
+0:00:01.157200781 [34m12597[00m 0x58c2d79df890 [36mINFO   [00m [00m             nvinfer gstnvinfer_impl.cpp:343:notifyLoadModelStatus:<nvinfer0>[00m [UID 1]: Load new model:/work/runs/20261015T151108_975568Z_int8-head_h265_perf_muxnative_b8_pre0_n200_src10_track-yes_out-yes_warm8/infer.txt sucessfully
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+INFO: ../nvdsinfer/nvdsinfer_model_builder.cpp:327 [FullDims Engine Info]: layers num: 2
+0   INPUT  kFLOAT input           3x640x640       min: 1x3x640x640     opt: 8x3x640x640     Max: 16x3x640x640    
+1   OUTPUT kFLOAT output          8400x6          min: 0               opt: 0               Max: 0               
+
+SOURCE START all 200 decoders ready after 6.87141s; common file-playback epoch=5.62879s
+READY all 200 sources producing output; warming up for 8 seconds
+WARMUP remaining=8s
+WARMUP remaining=3s
+FPS  1.0/10.0s | det+track=1978.5 | per stream min/avg/max=9.9/9.9/9.9 | active=200/200 | cumulative P95=134.8ms | interval P95=134.8ms | detector=1978.5 FPS | tracks=2360 | mosaic=9.9 FPS
+FPS  2.0/10.0s | det+track=1962.0 | per stream min/avg/max=8.9/9.8/9.9 | active=200/200 | cumulative P95=140.8ms | interval P95=140.8ms | detector=1962.0 FPS | tracks=2392 | mosaic=9.9 FPS
+FPS  3.0/10.0s | det+track=1969.2 | per stream min/avg/max=9.0/9.8/10.0 | active=200/200 | cumulative P95=237.9ms | interval P95=249.5ms | detector=1969.2 FPS | tracks=2384 | mosaic=10.0 FPS
+FPS  4.0/10.0s | det+track=1829.7 | per stream min/avg/max=8.9/9.1/9.9 | active=200/200 | cumulative P95=245.1ms | interval P95=253.7ms | detector=1983.5 FPS | tracks=2420 | mosaic=8.9 FPS
+FPS  5.0/10.0s | det+track=1889.6 | per stream min/avg/max=8.9/9.4/9.9 | active=200/200 | cumulative P95=298.8ms | interval P95=311.1ms | detector=1735.7 FPS | tracks=2413 | mosaic=9.9 FPS
+FPS  6.0/10.0s | det+track=1961.3 | per stream min/avg/max=8.9/9.8/9.9 | active=200/200 | cumulative P95=327.8ms | interval P95=351.7ms | detector=1961.3 FPS | tracks=2399 | mosaic=9.9 FPS
+FPS  7.1/10.0s | det+track=1989.1 | per stream min/avg/max=9.9/9.9/9.9 | active=200/200 | cumulative P95=360.2ms | interval P95=378.2ms | detector=1989.1 FPS | tracks=2437 | mosaic=9.0 FPS
+FPS  8.1/10.0s | det+track=1788.6 | per stream min/avg/max=8.9/8.9/8.9 | active=200/200 | cumulative P95=381.4ms | interval P95=411.4ms | detector=1987.3 FPS | tracks=2414 | mosaic=9.9 FPS
+FPS  9.1/10.0s | det+track=1989.1 | per stream min/avg/max=9.9/9.9/9.9 | active=200/200 | cumulative P95=413.7ms | interval P95=428.8ms | detector=1989.1 FPS | tracks=2405 | mosaic=9.0 FPS
+FPS 10.0/10.0s | det+track=2132.6 | per stream min/avg/max=10.7/10.7/10.7 | active=200/200 | cumulative P95=418.6ms | interval P95=422.2ms | detector=1919.3 FPS | tracks=2342 | mosaic=9.6 FPS
+FINISH measurement stopped; finalizing output
+nvstreammux: Successfully handled EOS for source_id=102
+nvstreammux: Successfully handled EOS for source_id=183
+nvstreammux: Successfully handled EOS for source_id=129
+nvstreammux: Successfully handled EOS for source_id=172
+nvstreammux: Successfully handled EOS for source_id=112
+nvstreammux: Successfully handled EOS for source_id=163
+nvstreammux: Successfully handled EOS for source_id=31
+nvstreammux: Successfully handled EOS for source_id=24
+nvstreammux: Successfully handled EOS for source_id=52
+nvstreammux: Successfully handled EOS for source_id=144
+nvstreammux: Successfully handled EOS for source_id=51
+nvstreammux: Successfully handled EOS for source_id=64
+nvstreammux: Successfully handled EOS for source_id=41
+nvstreammux: Successfully handled EOS for source_id=109
+nvstreammux: Successfully handled EOS for source_id=26
+nvstreammux: Successfully handled EOS for source_id=192
+nvstreammux: Successfully handled EOS for source_id=15
+nvstreammux: Successfully handled EOS for source_id=44
+nvstreammux: Successfully handled EOS for source_id=151
+nvstreammux: Successfully handled EOS for source_id=165
+nvstreammux: Successfully handled EOS for source_id=117
+nvstreammux: Successfully handled EOS for source_id=58
+nvstreammux: Successfully handled EOS for source_id=73
+nvstreammux: Successfully handled EOS for source_id=170
+nvstreammux: Successfully handled EOS for source_id=75
+nvstreammux: Successfully handled EOS for source_id=5
+nvstreammux: Successfully handled EOS for source_id=29
+nvstreammux: Successfully handled EOS for source_id=161
+nvstreammux: Successfully handled EOS for source_id=188
+nvstreammux: Successfully handled EOS for source_id=197
+nvstreammux: Successfully handled EOS for source_id=46
+nvstreammux: Successfully handled EOS for source_id=104
+nvstreammux: Successfully handled EOS for source_id=95
+nvstreammux: Successfully handled EOS for source_id=181
+nvstreammux: Successfully handled EOS for source_id=100
+nvstreammux: Successfully handled EOS for source_id=187
+nvstreammux: Successfully handled EOS for source_id=149
+nvstreammux: Successfully handled EOS for source_id=125
+nvstreammux: Successfully handled EOS for source_id=173
+nvstreammux: Successfully handled EOS for source_id=180
+nvstreammux: Successfully handled EOS for source_id=28
+nvstreammux: Successfully handled EOS for source_id=122
+nvstreammux: Successfully handled EOS for source_id=30
+nvstreammux: Successfully handled EOS for source_id=6
+nvstreammux: Successfully handled EOS for source_id=39
+nvstreammux: Successfully handled EOS for source_id=66
+nvstreammux: Successfully handled EOS for source_id=53
+nvstreammux: Successfully handled EOS for source_id=189
+nvstreammux: Successfully handled EOS for source_id=61
+nvstreammux: Successfully handled EOS for source_id=145
+nvstreammux: Successfully handled EOS for source_id=132
+nvstreammux: Successfully handled EOS for source_id=3
+nvstreammux: Successfully handled EOS for source_id=175
+nvstreammux: Successfully handled EOS for source_id=177
+nvstreammux: Successfully handled EOS for source_id=86
+nvstreammux: Successfully handled EOS for source_id=198
+nvstreammux: Successfully handled EOS for source_id=37
+nvstreammux: Successfully handled EOS for source_id=126
+nvstreammux: Successfully handled EOS for source_id=42
+nvstreammux: Successfully handled EOS for source_id=101
+nvstreammux: Successfully handled EOS for source_id=57
+nvstreammux: Successfully handled EOS for source_id=48
+nvstreammux: Successfully handled EOS for source_id=78
+nvstreammux: Successfully handled EOS for source_id=97
+nvstreammux: Successfully handled EOS for source_id=21
+nvstreammux: Successfully handled EOS for source_id=133
+nvstreammux: Successfully handled EOS for source_id=4
+nvstreammux: Successfully handled EOS for source_id=93
+nvstreammux: Successfully handled EOS for source_id=56
+nvstreammux: Successfully handled EOS for source_id=167
+nvstreammux: Successfully handled EOS for source_id=38
+nvstreammux: Successfully handled EOS for source_id=196
+nvstreammux: Successfully handled EOS for source_id=27
+nvstreammux: Successfully handled EOS for source_id=137
+nvstreammux: Successfully handled EOS for source_id=118
+nvstreammux: Successfully handled EOS for source_id=136
+nvstreammux: Successfully handled EOS for source_id=191
+nvstreammux: Successfully handled EOS for source_id=71
+nvstreammux: Successfully handled EOS for source_id=199
+nvstreammux: Successfully handled EOS for source_id=154
+nvstreammux: Successfully handled EOS for source_id=182
+nvstreammux: Successfully handled EOS for source_id=138
+nvstreammux: Successfully handled EOS for source_id=32
+nvstreammux: Successfully handled EOS for source_id=8
+nvstreammux: Successfully handled EOS for source_id=54
+nvstreammux: Successfully handled EOS for source_id=143
+nvstreammux: Successfully handled EOS for source_id=62
+nvstreammux: Successfully handled EOS for source_id=36
+nvstreammux: Successfully handled EOS for source_id=25
+nvstreammux: Successfully handled EOS for source_id=111
+nvstreammux: Successfully handled EOS for source_id=34
+nvstreammux: Successfully handled EOS for source_id=142
+nvstreammux: Successfully handled EOS for source_id=2
+nvstreammux: Successfully handled EOS for source_id=114
+nvstreammux: Successfully handled EOS for source_id=157
+nvstreammux: Successfully handled EOS for source_id=80
+nvstreammux: Successfully handled EOS for source_id=194
+nvstreammux: Successfully handled EOS for source_id=50
+nvstreammux: Successfully handled EOS for source_id=120
+nvstreammux: Successfully handled EOS for source_id=123
+nvstreammux: Successfully handled EOS for source_id=45
+nvstreammux: Successfully handled EOS for source_id=99
+nvstreammux: Successfully handled EOS for source_id=84
+nvstreammux: Successfully handled EOS for source_id=94
+nvstreammux: Successfully handled EOS for source_id=156
+nvstreammux: Successfully handled EOS for source_id=90
+nvstreammux: Successfully handled EOS for source_id=67
+nvstreammux: Successfully handled EOS for source_id=164
+nvstreammux: Successfully handled EOS for source_id=87
+nvstreammux: Successfully handled EOS for source_id=105
+nvstreammux: Successfully handled EOS for source_id=91
+nvstreammux: Successfully handled EOS for source_id=128
+nvstreammux: Successfully handled EOS for source_id=9
+nvstreammux: Successfully handled EOS for source_id=19
+nvstreammux: Successfully handled EOS for source_id=162
+nvstreammux: Successfully handled EOS for source_id=72
+nvstreammux: Successfully handled EOS for source_id=158
+nvstreammux: Successfully handled EOS for source_id=83
+nvstreammux: Successfully handled EOS for source_id=47
+nvstreammux: Successfully handled EOS for source_id=16
+nvstreammux: Successfully handled EOS for source_id=69
+nvstreammux: Successfully handled EOS for source_id=150
+nvstreammux: Successfully handled EOS for source_id=131
+nvstreammux: Successfully handled EOS for source_id=174
+nvstreammux: Successfully handled EOS for source_id=186
+nvstreammux: Successfully handled EOS for source_id=147
+nvstreammux: Successfully handled EOS for source_id=135
+nvstreammux: Successfully handled EOS for source_id=190
+nvstreammux: Successfully handled EOS for source_id=153
+nvstreammux: Successfully handled EOS for source_id=12
+nvstreammux: Successfully handled EOS for source_id=176
+nvstreammux: Successfully handled EOS for source_id=166
+nvstreammux: Successfully handled EOS for source_id=60
+nvstreammux: Successfully handled EOS for source_id=63
+nvstreammux: Successfully handled EOS for source_id=1
+nvstreammux: Successfully handled EOS for source_id=10
+nvstreammux: Successfully handled EOS for source_id=195
+nvstreammux: Successfully handled EOS for source_id=115
+nvstreammux: Successfully handled EOS for source_id=70
+nvstreammux: Successfully handled EOS for source_id=49
+nvstreammux: Successfully handled EOS for source_id=79
+nvstreammux: Successfully handled EOS for source_id=17
+nvstreammux: Successfully handled EOS for source_id=20
+nvstreammux: Successfully handled EOS for source_id=98
+nvstreammux: Successfully handled EOS for source_id=11
+nvstreammux: Successfully handled EOS for source_id=159
+nvstreammux: Successfully handled EOS for source_id=108
+nvstreammux: Successfully handled EOS for source_id=116
+nvstreammux: Successfully handled EOS for source_id=146
+nvstreammux: Successfully handled EOS for source_id=134
+nvstreammux: Successfully handled EOS for source_id=152
+nvstreammux: Successfully handled EOS for source_id=185
+nvstreammux: Successfully handled EOS for source_id=121
+nvstreammux: Successfully handled EOS for source_id=160
+nvstreammux: Successfully handled EOS for source_id=110
+nvstreammux: Successfully handled EOS for source_id=171
+nvstreammux: Successfully handled EOS for source_id=43
+nvstreammux: Successfully handled EOS for source_id=23
+nvstreammux: Successfully handled EOS for source_id=13
+nvstreammux: Successfully handled EOS for source_id=148
+nvstreammux: Successfully handled EOS for source_id=82
+nvstreammux: Successfully handled EOS for source_id=85
+nvstreammux: Successfully handled EOS for source_id=127
+nvstreammux: Successfully handled EOS for source_id=178
+nvstreammux: Successfully handled EOS for source_id=68
+nvstreammux: Successfully handled EOS for source_id=40
+nvstreammux: Successfully handled EOS for source_id=184
+nvstreammux: Successfully handled EOS for source_id=169
+nvstreammux: Successfully handled EOS for source_id=59
+nvstreammux: Successfully handled EOS for source_id=193
+nvstreammux: Successfully handled EOS for source_id=106
+nvstreammux: Successfully handled EOS for source_id=76
+nvstreammux: Successfully handled EOS for source_id=140
+nvstreammux: Successfully handled EOS for source_id=155
+nvstreammux: Successfully handled EOS for source_id=179
+nvstreammux: Successfully handled EOS for source_id=168
+nvstreammux: Successfully handled EOS for source_id=130
+nvstreammux: Successfully handled EOS for source_id=113
+nvstreammux: Successfully handled EOS for source_id=96
+nvstreammux: Successfully handled EOS for source_id=77
+nvstreammux: Successfully handled EOS for source_id=103
+nvstreammux: Successfully handled EOS for source_id=18
+nvstreammux: Successfully handled EOS for source_id=35
+nvstreammux: Successfully handled EOS for source_id=55
+nvstreammux: Successfully handled EOS for source_id=33
+nvstreammux: Successfully handled EOS for source_id=141
+nvstreammux: Successfully handled EOS for source_id=89
+nvstreammux: Successfully handled EOS for source_id=65
+nvstreammux: Successfully handled EOS for source_id=14
+nvstreammux: Successfully handled EOS for source_id=7
+nvstreammux: Successfully handled EOS for source_id=22
+nvstreammux: Successfully handled EOS for source_id=139
+nvstreammux: Successfully handled EOS for source_id=124
+nvstreammux: Successfully handled EOS for source_id=119
+nvstreammux: Successfully handled EOS for source_id=81
+nvstreammux: Successfully handled EOS for source_id=74
+nvstreammux: Successfully handled EOS for source_id=92
+nvstreammux: Successfully handled EOS for source_id=0
+nvstreammux: Successfully handled EOS for source_id=88
+nvstreammux: Successfully handled EOS for source_id=107
+RESULT total=1947.7 FPS | minimum=9.7 FPS | P95=418.6ms | mosaic frames=96
+[NvMultiObjectTracker] De-initialized

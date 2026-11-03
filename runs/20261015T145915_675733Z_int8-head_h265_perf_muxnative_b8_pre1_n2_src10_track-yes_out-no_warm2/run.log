@@ -1,0 +1,21 @@
+START 2 independent decoders | input=2560x1440 | mux=2560x1440 | analysis=640x640 | detector batch=8 | stream capacity=2 | tracker=NvDCF 640x384 | output=no | timed window=3s
+gstnvtracker: Loading low-level lib at /opt/nvidia/deepstream/deepstream/lib/libnvds_nvmultiobjecttracker.so
+[NvMultiObjectTracker] Initialized
+0:00:00.198820164 [32m   97[00m 0x63279e39b290 [36mINFO   [00m [00m             nvinfer gstnvinfer.cpp:684:gst_nvinfer_logger:<nvinfer0>[00m NvDsInferContext[UID 1]: Info from NvDsInferContextImpl::deserializeEngineAndBackend() <nvdsinfer_context_impl.cpp:2092> [UID = 1]: deserialized trt engine from :/work/models/yolov8s-int8-head-b16.engine
+0:00:00.198861450 [32m   97[00m 0x63279e39b290 [36mINFO   [00m [00m             nvinfer gstnvinfer.cpp:684:gst_nvinfer_logger:<nvinfer0>[00m NvDsInferContext[UID 1]: Info from NvDsInferContextImpl::generateBackendContext() <nvdsinfer_context_impl.cpp:2195> [UID = 1]: Use deserialized engine model: /work/models/yolov8s-int8-head-b16.engine
+0:00:00.207749505 [32m   97[00m 0x63279e39b290 [36mINFO   [00m [00m             nvinfer gstnvinfer_impl.cpp:343:notifyLoadModelStatus:<nvinfer0>[00m [UID 1]: Load new model:/work/runs/20261015T145915_675733Z_int8-head_h265_perf_muxnative_b8_pre1_n2_src10_track-yes_out-no_warm2/infer.txt sucessfully
+INFO: ../nvdsinfer/nvdsinfer_model_builder.cpp:327 [FullDims Engine Info]: layers num: 2
+0   INPUT  kFLOAT input           3x640x640       min: 1x3x640x640     opt: 8x3x640x640     Max: 16x3x640x640    
+1   OUTPUT kFLOAT output          8400x6          min: 0               opt: 0               Max: 0               
+
+PREROLL state=3 pending=0 status=3
+Failed to query video capabilities: Invalid argument
+Failed to query video capabilities: Invalid argument
+READY all 2 sources producing output; warming up for 2 seconds
+WARMUP remaining=2s
+FPS  1.0/3.0s | det+track=20.0 | per stream min/avg/max=10.0/10.0/10.0 | active=2/2 | cumulative P95=3.6ms | interval P95=3.6ms | detector=20.0 FPS | tracks=25
+FPS  2.0/3.0s | det+track=19.8 | per stream min/avg/max=9.9/9.9/9.9 | active=2/2 | cumulative P95=3.4ms | interval P95=3.4ms | detector=19.8 FPS | tracks=22
+FPS  3.0/3.0s | det+track=20.2 | per stream min/avg/max=10.1/10.1/10.1 | active=2/2 | cumulative P95=3.4ms | interval P95=3.3ms | detector=20.2 FPS | tracks=25
+FINISH measurement stopped; finalizing output
+RESULT total=20.0 FPS | minimum=10.0 FPS | P95=3.4ms | mosaic frames=0
+[NvMultiObjectTracker] De-initialized

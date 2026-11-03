@@ -1,0 +1,32 @@
+
+CAMEX interactive benchmark | detection + tracking | n=150 | input=2K 2560x1440 | source=10 FPS | analysis target=10 FPS each | output=no
+Detector input remains 640x640. 2K is upscaled from FHD for load testing, not native-2K quality evaluation.
+DATASET airport50: 50 distinct synthetic camera views across 150 independent inputs; 100 repeated inputs. Not a live RTSP test.
+NvDCF person tracking is enabled. Track IDs and colours persist within each camera; no cross-camera identification.
+Headless mode: no tiler, OSD or video encoder.
+RUN FOLDER: /media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/runs/20261015T150535_752859Z_int8-head_h265_perf_muxnative_b8_pre0_n150_src10_track-yes_out-no_warm8
+
+EXPERIMENT precision=int8-head codec=h265 tracker=perf groups=1 mux=[2560, 1440] batch=8 preroll=False
+START 150 independent decoders | input=2560x1440 | mux=2560x1440 | analysis=640x640 | detector batch=8 | stream capacity=150 | tracker=NvDCF 640x384 | output=no | timed window=10s
+READY all 150 sources producing output; warming up for 8 seconds
+WARMUP remaining=8s | GPU=8% decode=60% encode=1% VRAM=21014 MiB temp=48C
+WARMUP remaining=3s | GPU=52% decode=100% encode=0% VRAM=21030 MiB temp=54C
+FPS  1.0/10.0s | det+track=1493.2 | per stream min/avg/max=10.0/10.0/10.0 | active=150/150 | cumulative P95=56.7ms | interval P95=56.7ms | detector=1493.2 FPS | tracks=1710 | GPU=55% decode=100% encode=0% VRAM=21030 MiB temp=57C
+FPS  2.0/10.0s | det+track=1494.6 | per stream min/avg/max=10.0/10.0/10.0 | active=150/150 | cumulative P95=58.3ms | interval P95=58.6ms | detector=1494.6 FPS | tracks=1764 | GPU=55% decode=100% encode=0% VRAM=21030 MiB temp=57C
+FPS  3.0/10.0s | det+track=1492.6 | per stream min/avg/max=10.0/10.0/10.0 | active=150/150 | cumulative P95=58.3ms | interval P95=56.5ms | detector=1492.6 FPS | tracks=1760 | GPU=54% decode=65% encode=0% VRAM=21030 MiB temp=57C
+FPS  4.0/10.0s | det+track=1492.9 | per stream min/avg/max=10.0/10.0/10.0 | active=150/150 | cumulative P95=56.8ms | interval P95=56.8ms | detector=1492.9 FPS | tracks=1747 | GPU=52% decode=100% encode=0% VRAM=21030 MiB temp=57C
+FPS  5.0/10.0s | det+track=1492.7 | per stream min/avg/max=10.0/10.0/10.0 | active=150/150 | cumulative P95=56.8ms | interval P95=56.0ms | detector=1642.0 FPS | tracks=1794 | GPU=54% decode=63% encode=0% VRAM=21030 MiB temp=58C
+FPS  6.0/10.0s | det+track=1493.4 | per stream min/avg/max=10.0/10.0/10.0 | active=150/150 | cumulative P95=56.8ms | interval P95=59.2ms | detector=1493.4 FPS | tracks=1833 | GPU=55% decode=100% encode=0% VRAM=21030 MiB temp=59C
+FPS  7.0/10.0s | det+track=1637.5 | per stream min/avg/max=10.9/10.9/10.9 | active=150/150 | cumulative P95=58.5ms | interval P95=64.3ms | detector=1488.7 FPS | tracks=1824 | GPU=57% decode=100% encode=0% VRAM=21030 MiB temp=59C
+FPS  8.0/10.0s | det+track=1491.9 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.5ms | interval P95=59.2ms | detector=1491.9 FPS | tracks=1788 | GPU=56% decode=66% encode=0% VRAM=21030 MiB temp=59C
+FPS  9.0/10.0s | det+track=1491.8 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.6ms | interval P95=59.9ms | detector=1491.8 FPS | tracks=1835 | GPU=56% decode=100% encode=0% VRAM=21030 MiB temp=60C
+FPS 10.0/10.0s | det+track=1414.6 | per stream min/avg/max=9.4/9.4/9.4 | active=150/150 | cumulative P95=58.5ms | interval P95=57.8ms | detector=1414.6 FPS | tracks=1824 | GPU=58% decode=78% encode=0% VRAM=21030 MiB temp=60C
+FINISH measurement stopped; finalizing output
+RESULT total=1500.0 FPS | minimum=10.0 FPS | P95=58.5ms | mosaic frames=0
+
+FINAL: 1500.0 detection + tracking FPS; detector stage 1500.0 FPS; slowest stream 10.0 FPS; P95 58.5 ms.
+Tracking observations and unique track-ID counts are in per_camera.csv; they are NOT tracking-accuracy or unique-person scores.
+TRACK COVERAGE: 150/150 sources produced person tracks.
+TARGET CHECK: PASS (target 10 FPS, each stream >=9.5 FPS, P95 <300 ms; short smoke test only).
+RESULTS FOLDER: /media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/runs/20261015T150535_752859Z_int8-head_h265_perf_muxnative_b8_pre0_n150_src10_track-yes_out-no_warm8
+OPEN FOLDER: xdg-open "/media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/runs/20261015T150535_752859Z_int8-head_h265_perf_muxnative_b8_pre0_n150_src10_track-yes_out-no_warm8"

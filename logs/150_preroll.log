@@ -1,0 +1,13 @@
+
+CAMEX interactive benchmark | detection + tracking | n=150 | input=2K 2560x1440 | source=10 FPS | analysis target=10 FPS each | output=no
+Detector input remains 640x640. 2K is upscaled from FHD for load testing, not native-2K quality evaluation.
+DATASET airport50: 50 distinct synthetic camera views across 150 independent inputs; 100 repeated inputs. Not a live RTSP test.
+NvDCF person tracking is enabled. Track IDs and colours persist within each camera; no cross-camera identification.
+Headless mode: no tiler, OSD or video encoder.
+RUN FOLDER: /media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/runs/20261015T150236_291769Z_int8-head_h265_perf_muxnative_b8_pre1_n150_src10_track-yes_out-no_warm8
+
+EXPERIMENT precision=int8-head codec=h265 tracker=perf groups=1 mux=[2560, 1440] batch=8 preroll=True
+START 150 independent decoders | input=2560x1440 | mux=2560x1440 | analysis=640x640 | detector batch=8 | stream capacity=150 | tracker=NvDCF 640x384 | output=no | timed window=10s
+RESULTS FOLDER: /media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/runs/20261015T150236_291769Z_int8-head_h265_perf_muxnative_b8_pre1_n150_src10_track-yes_out-no_warm8
+OPEN FOLDER: xdg-open "/media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/runs/20261015T150236_291769Z_int8-head_h265_perf_muxnative_b8_pre1_n150_src10_track-yes_out-no_warm8"
+Run did not complete normally (exit 3); inspect run.log.

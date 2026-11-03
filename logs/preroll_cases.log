@@ -1,0 +1,2 @@
+BEGIN 150_preroll
+SUMMARY {"name": "150_preroll", "inputs": 150, "warmup": 8, "recording": false, "folder": "/media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/runs/20261015T150236_291769Z_int8-head_h265_perf_muxnative_b8_pre1_n150_src10_track-yes_out-no_warm8", "exit_code": 3, "resources": {}, "performance": {"total_fps": null, "minimum_fps": null, "p95_ms": null, "target_check": null}}

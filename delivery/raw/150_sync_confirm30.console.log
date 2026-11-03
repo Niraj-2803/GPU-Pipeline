@@ -1,0 +1,54 @@
+
+CAMEX interactive benchmark | detection + tracking | n=150 | input=2K 2560x1440 | source=10 FPS | analysis target=10 FPS each | output=no
+Detector input remains 640x640. 2K is upscaled from FHD for load testing, not native-2K quality evaluation.
+DATASET airport50: 50 distinct synthetic camera views across 150 independent inputs; 100 repeated inputs. Not a live RTSP test.
+NvDCF person tracking is enabled. Track IDs and colours persist within each camera; no cross-camera identification.
+Headless mode: no tiler, OSD or video encoder.
+RUN FOLDER: /media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/runs/20261015T150915_209152Z_int8-head_h265_perf_muxnative_b8_pre0_n150_src10_track-yes_out-no_warm8
+
+EXPERIMENT precision=int8-head codec=h265 tracker=perf groups=1 mux=[2560, 1440] batch=8 preroll=False
+FILE PLAYBACK: wait for all decoders, then use one common playback epoch. Initialization is reported separately; no frames are skipped for 10-FPS analysis.
+START 150 independent decoders | input=2560x1440 | mux=2560x1440 | analysis=640x640 | detector batch=8 | stream capacity=150 | tracker=NvDCF 640x384 | output=no | timed window=30s
+SOURCE START all 150 decoders ready after 5.2063s; common file-playback epoch=4.26082s
+READY all 150 sources producing output; warming up for 8 seconds
+WARMUP remaining=8s | GPU=27% decode=51% encode=0% VRAM=21014 MiB temp=62C
+WARMUP remaining=3s | GPU=55% decode=63% encode=0% VRAM=21030 MiB temp=65C
+FPS  1.0/30.0s | det+track=1476.4 | per stream min/avg/max=9.8/9.8/9.8 | active=150/150 | cumulative P95=59.3ms | interval P95=59.3ms | detector=1476.4 FPS | tracks=1710 | GPU=57% decode=65% encode=0% VRAM=21030 MiB temp=66C
+FPS  2.0/30.0s | det+track=1494.7 | per stream min/avg/max=10.0/10.0/10.0 | active=150/150 | cumulative P95=57.2ms | interval P95=55.8ms | detector=1494.7 FPS | tracks=1764 | GPU=53% decode=64% encode=0% VRAM=21030 MiB temp=66C
+FPS  3.0/30.0s | det+track=1492.7 | per stream min/avg/max=10.0/10.0/10.0 | active=150/150 | cumulative P95=58.6ms | interval P95=58.6ms | detector=1641.9 FPS | tracks=1758 | GPU=58% decode=65% encode=0% VRAM=21030 MiB temp=66C
+FPS  4.0/30.0s | det+track=1491.1 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.1ms | interval P95=58.1ms | detector=1491.1 FPS | tracks=1749 | GPU=56% decode=65% encode=0% VRAM=21030 MiB temp=66C
+FPS  5.0/30.0s | det+track=1640.6 | per stream min/avg/max=10.9/10.9/10.9 | active=150/150 | cumulative P95=58.1ms | interval P95=55.3ms | detector=1491.4 FPS | tracks=1815 | GPU=56% decode=65% encode=0% VRAM=21030 MiB temp=66C
+FPS  6.0/30.0s | det+track=1493.3 | per stream min/avg/max=10.0/10.0/10.0 | active=150/150 | cumulative P95=57.4ms | interval P95=57.1ms | detector=1493.3 FPS | tracks=1809 | GPU=53% decode=63% encode=0% VRAM=21030 MiB temp=66C
+FPS  7.0/30.0s | det+track=1492.2 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=57.8ms | interval P95=57.8ms | detector=1492.2 FPS | tracks=1824 | GPU=57% decode=63% encode=0% VRAM=21030 MiB temp=66C
+FPS  8.1/30.0s | det+track=1492.0 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=57.5ms | interval P95=57.5ms | detector=1492.0 FPS | tracks=1787 | GPU=54% decode=65% encode=0% VRAM=21030 MiB temp=67C
+FPS  9.1/30.0s | det+track=1490.1 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.1ms | interval P95=59.0ms | detector=1490.1 FPS | tracks=1836 | GPU=55% decode=63% encode=0% VRAM=21030 MiB temp=67C
+FPS 10.1/30.0s | det+track=1489.5 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.1ms | interval P95=60.1ms | detector=1489.5 FPS | tracks=1825 | GPU=55% decode=63% encode=0% VRAM=21030 MiB temp=67C
+FPS 11.1/30.0s | det+track=1491.1 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.6ms | interval P95=58.9ms | detector=1491.1 FPS | tracks=1779 | GPU=53% decode=63% encode=0% VRAM=21030 MiB temp=67C
+FPS 12.1/30.0s | det+track=1491.5 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.7ms | interval P95=59.3ms | detector=1491.5 FPS | tracks=1785 | GPU=57% decode=63% encode=0% VRAM=21030 MiB temp=67C
+FPS 13.1/30.0s | det+track=1486.6 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.6ms | interval P95=57.3ms | detector=1486.6 FPS | tracks=1716 | GPU=50% decode=63% encode=0% VRAM=21030 MiB temp=67C
+FPS 14.1/30.0s | det+track=1484.5 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.6ms | interval P95=57.3ms | detector=1484.5 FPS | tracks=1740 | GPU=56% decode=62% encode=0% VRAM=21030 MiB temp=67C
+FPS 15.1/30.0s | det+track=1491.6 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.1ms | interval P95=57.8ms | detector=1491.6 FPS | tracks=1776 | GPU=56% decode=63% encode=0% VRAM=21030 MiB temp=67C
+FPS 16.1/30.0s | det+track=1489.5 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.1ms | interval P95=58.1ms | detector=1489.5 FPS | tracks=1755 | GPU=56% decode=63% encode=0% VRAM=21030 MiB temp=67C
+FPS 17.1/30.0s | det+track=1490.4 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.1ms | interval P95=58.0ms | detector=1490.4 FPS | tracks=1743 | GPU=55% decode=64% encode=0% VRAM=21030 MiB temp=67C
+FPS 18.1/30.0s | det+track=1490.5 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.1ms | interval P95=59.0ms | detector=1490.5 FPS | tracks=1740 | GPU=57% decode=65% encode=0% VRAM=21030 MiB temp=67C
+FPS 19.1/30.0s | det+track=1492.1 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.6ms | interval P95=61.4ms | detector=1641.3 FPS | tracks=1765 | GPU=56% decode=66% encode=1% VRAM=21030 MiB temp=67C
+FPS 20.1/30.0s | det+track=1488.2 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.9ms | interval P95=59.3ms | detector=1488.2 FPS | tracks=1821 | GPU=53% decode=63% encode=0% VRAM=21030 MiB temp=67C
+FPS 21.1/30.0s | det+track=1639.6 | per stream min/avg/max=10.9/10.9/10.9 | active=150/150 | cumulative P95=58.9ms | interval P95=59.0ms | detector=1490.5 FPS | tracks=1821 | GPU=54% decode=62% encode=0% VRAM=21030 MiB temp=68C
+FPS 22.1/30.0s | det+track=1494.4 | per stream min/avg/max=10.0/10.0/10.0 | active=150/150 | cumulative P95=58.9ms | interval P95=58.2ms | detector=1494.4 FPS | tracks=1824 | GPU=59% decode=64% encode=2% VRAM=21030 MiB temp=67C
+FPS 23.2/30.0s | det+track=1491.6 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.9ms | interval P95=60.0ms | detector=1491.6 FPS | tracks=1842 | GPU=61% decode=64% encode=0% VRAM=21030 MiB temp=68C
+FPS 24.2/30.0s | det+track=1492.7 | per stream min/avg/max=10.0/10.0/10.0 | active=150/150 | cumulative P95=58.9ms | interval P95=57.0ms | detector=1492.7 FPS | tracks=1836 | GPU=59% decode=62% encode=1% VRAM=21030 MiB temp=68C
+FPS 25.2/30.0s | det+track=1490.8 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.9ms | interval P95=58.2ms | detector=1490.8 FPS | tracks=1782 | GPU=55% decode=63% encode=0% VRAM=21030 MiB temp=68C
+FPS 26.2/30.0s | det+track=1492.3 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=58.9ms | interval P95=59.2ms | detector=1492.3 FPS | tracks=1731 | GPU=58% decode=63% encode=0% VRAM=21030 MiB temp=68C
+FPS 27.2/30.0s | det+track=1489.8 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=59.0ms | interval P95=74.8ms | detector=1489.8 FPS | tracks=1728 | GPU=56% decode=63% encode=0% VRAM=21030 MiB temp=68C
+FPS 28.2/30.0s | det+track=1493.5 | per stream min/avg/max=10.0/10.0/10.0 | active=150/150 | cumulative P95=59.0ms | interval P95=57.4ms | detector=1493.5 FPS | tracks=1815 | GPU=57% decode=63% encode=0% VRAM=21030 MiB temp=68C
+FPS 29.2/30.0s | det+track=1489.2 | per stream min/avg/max=9.9/9.9/9.9 | active=150/150 | cumulative P95=59.0ms | interval P95=61.5ms | detector=1489.2 FPS | tracks=1750 | GPU=53% decode=65% encode=0% VRAM=21030 MiB temp=68C
+FPS 30.0/30.0s | det+track=1472.6 | per stream min/avg/max=9.8/9.8/9.8 | active=150/150 | cumulative P95=59.0ms | interval P95=57.1ms | detector=1472.6 FPS | tracks=1698 | GPU=54% decode=62% encode=0% VRAM=21030 MiB temp=68C
+FINISH measurement stopped; finalizing output
+RESULT total=1500.0 FPS | minimum=10.0 FPS | P95=59.0ms | mosaic frames=0
+
+FINAL: 1500.0 detection + tracking FPS; detector stage 1500.0 FPS; slowest stream 10.0 FPS; P95 59.0 ms.
+Tracking observations and unique track-ID counts are in per_camera.csv; they are NOT tracking-accuracy or unique-person scores.
+TRACK COVERAGE: 150/150 sources produced person tracks.
+TARGET CHECK: PASS (target 10 FPS, each stream >=9.5 FPS, P95 <300 ms; short smoke test only).
+RESULTS FOLDER: /media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/runs/20261015T150915_209152Z_int8-head_h265_perf_muxnative_b8_pre0_n150_src10_track-yes_out-no_warm8
+OPEN FOLDER: xdg-open "/media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/runs/20261015T150915_209152Z_int8-head_h265_perf_muxnative_b8_pre0_n150_src10_track-yes_out-no_warm8"

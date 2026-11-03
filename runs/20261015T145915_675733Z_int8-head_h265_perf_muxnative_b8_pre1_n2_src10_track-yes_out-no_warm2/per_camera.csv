@@ -1,0 +1,3 @@
+id,source_camera,replica,area,frames,fps,detector_frames,detector_fps,person_detections,track_observations,unique_track_ids,unassigned_observations,duplicates,invalid_latency,latency_samples,paced_input_frames,sampled_out_frames,p95_ms
+1,C01,1,CHECK-IN,30,10.0,30,10.0,289,287,13,0,0,0,30,30,0,3.355981
+2,C02,1,CHECK-IN,30,10.0,30,10.0,450,441,19,0,0,0,30,30,0,3.355981

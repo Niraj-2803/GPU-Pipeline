@@ -1,0 +1,62 @@
+{
+  "n": 150,
+  "out": "no",
+  "track": "yes",
+  "dataset": "airport50",
+  "precision": "int8-head",
+  "tracker_preset": "perf",
+  "mux_size": "native",
+  "batch": 8,
+  "tracker_groups": 1,
+  "decode_surfaces": 2,
+  "codec": "h265",
+  "preroll": false,
+  "profile_stages": false,
+  "sync_start": true,
+  "mux_timeout": 10000,
+  "extended_source": false,
+  "analysis_fps": 10,
+  "resolution": "2K",
+  "source_fps": 10,
+  "seconds": 10,
+  "warmup": 8,
+  "model": "YOLOv8s",
+  "engine_sha256": "0f29526e87ae5718a39f9b51d5b1485f4652cb5397cc5b9c03f0c00f86ef8905",
+  "analysis_size": 640,
+  "tracker": {
+    "enabled": true,
+    "algorithm": "NvDCF",
+    "dimensions": [
+      640,
+      384
+    ],
+    "config": "/opt/nvidia/deepstream/deepstream/samples/configs/deepstream-app/config_tracker_NvDCF_perf.yml",
+    "stream_capacity": 150,
+    "identity_scope": "per camera, per run; no cross-camera ReID",
+    "config_sha256": "c93306edd41dd87f52bc3b33c6fce5b6e445f6e01c988cda08646fa269e1e68c"
+  },
+  "person_class_filter": 0,
+  "unique_source_views": 50,
+  "repeated_inputs": 100,
+  "source": "/media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/source_profiles/h265/C01.mp4",
+  "source_width": 2560,
+  "source_height": 1440,
+  "source_probe": {
+    "codec_name": "hevc",
+    "width": 2560,
+    "height": 1440,
+    "avg_frame_rate": "10/1"
+  },
+  "source_is_upscaled": true,
+  "original_source_dimensions": [
+    1920,
+    1080
+  ],
+  "mux_dimensions": [
+    2560,
+    1440
+  ],
+  "independent_decode": true,
+  "warmup_seconds": 8,
+  "timestamp_utc": "20261015T150535_752859Z"
+}

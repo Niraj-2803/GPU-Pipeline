@@ -1,0 +1,36 @@
+
+CAMEX interactive benchmark | detection + tracking | n=200 | input=2K 2560x1440 | source=10 FPS | analysis target=10 FPS each | output=yes
+Detector input remains 640x640. 2K is upscaled from FHD for load testing, not native-2K quality evaluation.
+DATASET airport50: 50 distinct synthetic camera views across 200 independent inputs; 150 repeated inputs. Not a live RTSP test.
+NvDCF person tracking is enabled. Track IDs and colours persist within each camera; no cross-camera identification.
+Video mode adds tiling, labels, overlays and encoding. Do not compare it as headless capacity.
+RUN FOLDER: /media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/runs/20261015T151108_975568Z_int8-head_h265_perf_muxnative_b8_pre0_n200_src10_track-yes_out-yes_warm8
+
+EXPERIMENT precision=int8-head codec=h265 tracker=perf groups=1 mux=[2560, 1440] batch=8 preroll=False
+FILE PLAYBACK: wait for all decoders, then use one common playback epoch. Initialization is reported separately; no frames are skipped for 10-FPS analysis.
+VIDEO 3840x2016 grid=15x14 target=10 mosaic FPS; person track IDs and stable colours
+START 200 independent decoders | input=2560x1440 | mux=2560x1440 | analysis=640x640 | detector batch=8 | stream capacity=200 | tracker=NvDCF 640x384 | output=yes | timed window=10s
+SOURCE START all 200 decoders ready after 6.87141s; common file-playback epoch=5.62879s
+READY all 200 sources producing output; warming up for 8 seconds
+WARMUP remaining=8s | GPU=9% decode=81% encode=0% VRAM=27652 MiB temp=62C
+WARMUP remaining=3s | GPU=75% decode=100% encode=1% VRAM=27670 MiB temp=67C
+FPS  1.0/10.0s | det+track=1978.5 | per stream min/avg/max=9.9/9.9/9.9 | active=200/200 | cumulative P95=134.8ms | interval P95=134.8ms | detector=1978.5 FPS | tracks=2360 | mosaic=9.9 FPS | GPU=94% decode=83% encode=2% VRAM=27912 MiB temp=72C
+FPS  2.0/10.0s | det+track=1962.0 | per stream min/avg/max=8.9/9.8/9.9 | active=200/200 | cumulative P95=140.8ms | interval P95=140.8ms | detector=1962.0 FPS | tracks=2392 | mosaic=9.9 FPS | GPU=95% decode=99% encode=2% VRAM=27912 MiB temp=71C
+FPS  3.0/10.0s | det+track=1969.2 | per stream min/avg/max=9.0/9.8/10.0 | active=200/200 | cumulative P95=237.9ms | interval P95=249.5ms | detector=1969.2 FPS | tracks=2384 | mosaic=10.0 FPS | GPU=96% decode=90% encode=2% VRAM=27912 MiB temp=71C
+FPS  4.0/10.0s | det+track=1829.7 | per stream min/avg/max=8.9/9.1/9.9 | active=200/200 | cumulative P95=245.1ms | interval P95=253.7ms | detector=1983.5 FPS | tracks=2420 | mosaic=8.9 FPS | GPU=94% decode=81% encode=2% VRAM=27912 MiB temp=72C
+FPS  5.0/10.0s | det+track=1889.6 | per stream min/avg/max=8.9/9.4/9.9 | active=200/200 | cumulative P95=298.8ms | interval P95=311.1ms | detector=1735.7 FPS | tracks=2413 | mosaic=9.9 FPS | GPU=96% decode=93% encode=2% VRAM=27912 MiB temp=73C
+FPS  6.0/10.0s | det+track=1961.3 | per stream min/avg/max=8.9/9.8/9.9 | active=200/200 | cumulative P95=327.8ms | interval P95=351.7ms | detector=1961.3 FPS | tracks=2399 | mosaic=9.9 FPS | GPU=91% decode=65% encode=2% VRAM=27912 MiB temp=74C
+FPS  7.1/10.0s | det+track=1989.1 | per stream min/avg/max=9.9/9.9/9.9 | active=200/200 | cumulative P95=360.2ms | interval P95=378.2ms | detector=1989.1 FPS | tracks=2437 | mosaic=9.0 FPS | GPU=96% decode=84% encode=2% VRAM=27912 MiB temp=72C
+FPS  8.1/10.0s | det+track=1788.6 | per stream min/avg/max=8.9/8.9/8.9 | active=200/200 | cumulative P95=381.4ms | interval P95=411.4ms | detector=1987.3 FPS | tracks=2414 | mosaic=9.9 FPS | GPU=97% decode=88% encode=2% VRAM=27912 MiB temp=72C
+FPS  9.1/10.0s | det+track=1989.1 | per stream min/avg/max=9.9/9.9/9.9 | active=200/200 | cumulative P95=413.7ms | interval P95=428.8ms | detector=1989.1 FPS | tracks=2405 | mosaic=9.0 FPS | GPU=97% decode=78% encode=2% VRAM=27912 MiB temp=74C
+FPS 10.0/10.0s | det+track=2132.6 | per stream min/avg/max=10.7/10.7/10.7 | active=200/200 | cumulative P95=418.6ms | interval P95=422.2ms | detector=1919.3 FPS | tracks=2342 | mosaic=9.6 FPS | GPU=97% decode=88% encode=2% VRAM=27912 MiB temp=74C
+FINISH measurement stopped; finalizing output
+RESULT total=1947.7 FPS | minimum=9.7 FPS | P95=418.6ms | mosaic frames=96
+
+FINAL: 1947.7 detection + tracking FPS; detector stage 1947.7 FPS; slowest stream 9.7 FPS; P95 418.6 ms.
+Tracking observations and unique track-ID counts are in per_camera.csv; they are NOT tracking-accuracy or unique-person scores.
+TRACK COVERAGE: 200/200 sources produced person tracks.
+TARGET CHECK: BELOW TARGET (target 10 FPS, each stream >=9.5 FPS, P95 <300 ms; short smoke test only).
+VIDEO SAVED: /media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/runs/20261015T151108_975568Z_int8-head_h265_perf_muxnative_b8_pre0_n200_src10_track-yes_out-yes_warm8/mosaic.mp4
+RESULTS FOLDER: /media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/runs/20261015T151108_975568Z_int8-head_h265_perf_muxnative_b8_pre0_n200_src10_track-yes_out-yes_warm8
+OPEN FOLDER: xdg-open "/media/dezzex/4tb_ssd/camex-150-200-tuning-20261015/runs/20261015T151108_975568Z_int8-head_h265_perf_muxnative_b8_pre0_n200_src10_track-yes_out-yes_warm8"

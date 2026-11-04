@@ -1,0 +1,7 @@
+{
+  "schema_version": "1.0",
+  "sources": [
+    {"camera_id": "office-entrance", "uri": "rtsp://127.0.0.1:29554/C01", "width": 1920, "height": 1080, "fps": 10},
+    {"camera_id": "office-lobby", "uri": "rtsp://127.0.0.1:29554/C02", "width": 1920, "height": 1080, "fps": 10}
+  ]
+}

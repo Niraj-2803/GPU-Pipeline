@@ -7,3 +7,21 @@
 *.webm
 *.mpeg
 *.mpg
+
+# Local runs, credentials, model exports and build products
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+*.private.*
+local.*.json
+benchmark/
+quality/
+build/
+data/
+*.float32
+models/*.onnx
+models/*.xml
+models/*.bin
+models/*/

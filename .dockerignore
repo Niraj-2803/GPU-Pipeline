@@ -1,0 +1,16 @@
+.git
+models
+datasets
+source_profiles
+delivery
+logs
+results
+runs
+benchmark
+quality
+*.tar.gz
+.venv
+venv
+__pycache__
+*.private.*
+local.*.json

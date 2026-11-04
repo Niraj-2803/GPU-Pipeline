@@ -1,0 +1,7 @@
+{
+  "schema_version": "1.0",
+  "sources": [
+    {"camera_id": "C01", "uri": "../data/C01.mp4", "width": 1920, "height": 1080, "fps": 10, "is_upscaled": false},
+    {"camera_id": "C02", "uri": "../data/C02.mp4", "width": 1920, "height": 1080, "fps": 10, "is_upscaled": false}
+  ]
+}

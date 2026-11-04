@@ -1,5 +1,10 @@
 # CAMEX Portable Detection and Tracking Reference
 
+This local optimization review adds opt-in profiles described in
+[optimization review notes](docs/OPTIMIZATION_REVIEW.md). The baseline setup
+below remains available. The faster CPU SSD model is not an accuracy-equivalent
+replacement for YOLOv8s and has not been approved for integration.
+
 Two implementations share source configuration, commands and JSON metadata:
 
 - **DeepStream:** NVIDIA hardware decoding, TensorRT YOLOv8s, NvDCF tracking.

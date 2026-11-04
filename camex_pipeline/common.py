@@ -139,9 +139,10 @@ class JsonlWriter:
             raise RuntimeError(f'Metadata writer did not finish: {self.error}')
 
 class ResourceMonitor:
-    def __init__(self, folder, gpu_index):
+    def __init__(self, folder, gpu_index, vram_reserve_mib=0):
         self.folder = pathlib.Path(folder)
         self.gpu_index = gpu_index
+        self.vram_reserve_mib = vram_reserve_mib
         self.stop = threading.Event()
         self.samples = []
         self.guard_reason = None
@@ -157,11 +158,11 @@ class ResourceMonitor:
                        'ram_used_mib': m.used / 2**20, 'ram_available_mib': m.available / 2**20}
                 try:
                     r = subprocess.run(['nvidia-smi', '-i', str(self.gpu_index),
-                        '--query-gpu=utilization.gpu,utilization.decoder,utilization.encoder,memory.used,temperature.gpu,power.draw',
+                        '--query-gpu=utilization.gpu,utilization.decoder,utilization.encoder,memory.used,temperature.gpu,power.draw,memory.total',
                         '--format=csv,noheader,nounits'], capture_output=True, text=True, timeout=3)
                     if r.returncode == 0:
                         vals = r.stdout.strip().split(',')
-                        for k, v in zip(['gpu_percent','decoder_percent','encoder_percent','vram_mib','temperature_c','power_w'], vals):
+                        for k, v in zip(['gpu_percent','decoder_percent','encoder_percent','vram_mib','temperature_c','power_w','vram_total_mib'], vals):
                             row[k] = float(v.strip())
                 except (OSError, ValueError, subprocess.TimeoutExpired):
                     row['gpu_monitor_unavailable'] = True
@@ -170,6 +171,8 @@ class ResourceMonitor:
                     self.guard_reason = 'GPU temperature reached the 85 C software guard'
                 if row['ram_available_mib']<2048:
                     self.guard_reason = 'Available system RAM fell below 2 GiB'
+                if self.vram_reserve_mib and row.get('vram_total_mib',float('inf'))-row.get('vram_mib',0)<self.vram_reserve_mib:
+                    self.guard_reason = 'GPU free-memory reserve reached'
                 out.write(json.dumps(row) + '\n')
                 self.stop.wait(1)
 

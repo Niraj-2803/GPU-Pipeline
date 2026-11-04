@@ -16,7 +16,7 @@ import openvino as ov
 import supervision as sv
 
 from .common import JsonlWriter, percentile
-from .postprocess import decode_person_output, letterbox_geometry
+from .postprocess import decode_person_output, decode_ssd_output, letterbox_geometry
 
 class CpuPipeline:
     def __init__(self, args, sources, folder, run_id):
@@ -40,15 +40,23 @@ class CpuPipeline:
                 'decoded':0, 'dropped':0, 'tracks':set(), 'objects':[], 'preview':None,
                 'latencies':[], 'fps':0.0, 'last_seen':None, 'reconnects':0, 'tracker':tracker,
                 'last_processed':None, 'tracking_epoch':0})
+            self.states[-1]['preprocess_ms']=[]
+            self.states[-1]['queue_ms']=[]
+            self.states[-1]['inference_post_ms']=[]
         all_files = all(not s['uri'].startswith(('rtsp://','rtsps://')) for s in sources)
         self.barrier = threading.Barrier(len(sources), action=self._set_epoch) if all_files else None
         core = ov.Core()
         model = core.read_model(args.model)
         input = model.input(0)
-        model.reshape({input: [1, 3, 640, 640]})
-        config = {'PERFORMANCE_HINT':'LATENCY', 'INFERENCE_NUM_THREADS':args.threads,
-                  'NUM_STREAMS':args.cpu_streams, 'INFERENCE_PRECISION_HINT':'f32',
+        if args.detector=='ssd':
+            shape=list(input.shape);self.net_h,self.net_w=shape[2:]
+        else:
+            self.net_h=self.net_w=args.analysis_size
+            model.reshape({input: [ov.Dimension(1,args.cpu_batch), 3, args.analysis_size, args.analysis_size]})
+        config = {'PERFORMANCE_HINT':args.performance_hint, 'INFERENCE_NUM_THREADS':args.threads,
+                  'INFERENCE_PRECISION_HINT':'f32',
                   'ENABLE_HYPER_THREADING':args.hyperthreads}
+        if args.cpu_streams!='AUTO':config['NUM_STREAMS']=int(args.cpu_streams)
         compiled = core.compile_model(model, 'CPU', config)
         self.effective_config={k:str(compiled.get_property(k)) for k in ['INFERENCE_NUM_THREADS','NUM_STREAMS','INFERENCE_PRECISION_HINT','ENABLE_HYPER_THREADING']}
         self.execution_devices = list(compiled.get_property('EXECUTION_DEVICES'))
@@ -104,12 +112,16 @@ class CpuPipeline:
                                 continue
                             last_bucket=bucket
                             ingest = time.monotonic()
-                            w, h, x, y = letterbox_geometry(frame.width, frame.height)
-                            resized = frame.reformat(width=w, height=h, format='rgb24').to_ndarray()
-                            rgb = np.zeros((640,640,3), np.uint8)
-                            rgb[y:y+h,x:x+w] = resized
+                            if self.args.detector=='ssd':
+                                rgb=frame.reformat(width=self.net_w,height=self.net_h,format='bgr24').to_ndarray()
+                            else:
+                                w, h, x, y = letterbox_geometry(frame.width, frame.height,self.args.analysis_size)
+                                resized = frame.reformat(width=w, height=h, format='rgb24').to_ndarray()
+                                rgb = np.zeros((self.args.analysis_size,self.args.analysis_size,3), np.uint8)
+                                rgb[y:y+h,x:x+w] = resized
+                            preprocessed=time.monotonic()
                             packet = {'rgb':rgb, 'frame_id':sequence-1, 'source_pts_ns':int(pts*1e9),
-                                      'ingest':ingest, 'width':frame.width, 'height':frame.height}
+                                      'ingest':ingest, 'preprocessed':preprocessed,'width':frame.width, 'height':frame.height}
                             with self.lock:
                                 if state['latest'] is not None and measured:
                                     state['dropped'] += 1
@@ -135,7 +147,19 @@ class CpuPipeline:
                 loop_offset = (time.monotonic() - self.epoch) if self.epoch else 0
 
     def _inference_done(self, request, userdata):
-        i, packet, tensor = userdata
+        packets,tensor=userdata
+        try:
+            output=request.get_output_tensor(0).data
+            for position,(i,packet) in enumerate(packets):
+                self._finish_one(output[position],i,packet)
+        except Exception as e:
+            self.error=f'Inference callback failed: {type(e).__name__}: {e}'
+            self.stop.set()
+        finally:
+            with self.lock:
+                for i,_ in packets:self.states[i]['busy']=False
+
+    def _finish_one(self, output, i, packet):
         state, source = self.states[i], self.sources[i]
         try:
             callback_time=time.monotonic()
@@ -143,8 +167,11 @@ class CpuPipeline:
                 state['tracking_epoch']+=1
                 if state['tracker'] is not None:state['tracker'].reset()
             state['last_processed']=callback_time
-            boxes, scores = decode_person_output(request.get_output_tensor(0).data,
-                packet['width'], packet['height'], self.args.threshold, self.args.nms)
+            if self.args.detector=='ssd':
+                boxes,scores=decode_ssd_output(output,packet['width'],packet['height'],self.args.threshold,self.args.ssd_class_id)
+            else:
+                boxes, scores = decode_person_output(output,
+                    packet['width'], packet['height'], self.args.threshold, self.args.nms,size=self.args.analysis_size)
             ids = [None] * len(boxes)
             if state['tracker'] is not None:
                 tracked = state['tracker'].update_with_detections(sv.Detections(
@@ -165,6 +192,9 @@ class CpuPipeline:
                 if measuring:
                     state['frames'] += 1
                     state['latencies'].append(latency)
+                    state['preprocess_ms'].append((packet['preprocessed']-packet['ingest'])*1000)
+                    state['queue_ms'].append((packet['submitted']-packet['preprocessed'])*1000)
+                    state['inference_post_ms'].append((now-packet['submitted'])*1000)
                     state['tracks'].update(t for t in ids if t is not None)
             if measuring:
                 self.writer.push({'schema_version':'1.0','type':'frame','run_id':self.run_id,
@@ -178,9 +208,6 @@ class CpuPipeline:
         except Exception as e:
             self.error = f'Inference callback failed: {type(e).__name__}: {e}'
             self.stop.set()
-        finally:
-            with self.lock:
-                state['busy'] = False
 
     def _video_frame(self):
         n = len(self.sources)
@@ -189,11 +216,15 @@ class CpuPipeline:
         tile_h = tile_w * 9 // 16 // 2 * 2
         canvas = np.zeros((rows*tile_h, cols*tile_w, 3), np.uint8)
         for i,(source,state) in enumerate(zip(self.sources,self.states)):
-            packet, objects = state['preview'], state['objects']
+            with self.lock:
+                packet, objects = state['preview'], state['objects']
             if packet is None:
                 continue
-            w,h,x,y = letterbox_geometry(packet['width'], packet['height'])
-            tile = cv2.resize(packet['rgb'][y:y+h,x:x+w,::-1], (tile_w,tile_h)).copy()
+            if self.args.detector=='ssd':
+                tile=cv2.resize(packet['rgb'],(tile_w,tile_h)).copy()
+            else:
+                w,h,x,y = letterbox_geometry(packet['width'], packet['height'],self.args.analysis_size)
+                tile = cv2.resize(packet['rgb'][y:y+h,x:x+w,::-1], (tile_w,tile_h)).copy()
             for obj in objects:
                 x1,y1,x2,y2 = obj['bbox_xyxy']
                 track_id = obj['track_id']
@@ -233,18 +264,24 @@ class CpuPipeline:
                     continue
                 if now>=self.start+self.args.seconds:
                     break
-                for _ in self.states:
-                    i=cursor%len(self.states);cursor+=1
-                    if not self.requests.is_ready():
-                        break
-                    with self.lock:
-                        state=self.states[i]
-                        packet=state['latest'] if not state['busy'] else None
-                        if packet is not None:
-                            state['latest']=None;state['busy']=True
-                    if packet is not None:
-                        tensor=np.ascontiguousarray(packet['rgb'].transpose(2,0,1)[None],dtype=np.float32)/255.
-                        self.requests.start_async({0:tensor},userdata=(i,packet,tensor),share_inputs=True)
+                for _ in range(self.args.requests):
+                    if not self.requests.is_ready():break
+                    packets=[]
+                    for _ in self.states:
+                        i=cursor%len(self.states);cursor+=1
+                        with self.lock:
+                            state=self.states[i]
+                            packet=state['latest'] if not state['busy'] else None
+                            if packet is not None:
+                                state['latest']=None;state['busy']=True
+                        if packet is not None:packets.append((i,packet))
+                        if len(packets)==self.args.cpu_batch:break
+                    if packets:
+                        tensor=np.ascontiguousarray(np.stack([p['rgb'].transpose(2,0,1) for _,p in packets]),dtype=np.float32)
+                        if self.args.detector=='yolo':tensor/=255.
+                        submitted=time.monotonic()
+                        for _,packet in packets:packet['submitted']=submitted
+                        self.requests.start_async({0:tensor},userdata=(packets,tensor),share_inputs=True)
                 if now>=self.start:
                     if reported is None:
                         reported=self.start
@@ -283,7 +320,13 @@ class CpuPipeline:
                   'unique_track_ids':len(state['tracks']),'p50_processing_ms':percentile(state['latencies'],50),
                   'p95_processing_ms':percentile(state['latencies'],95),'reconnects':state['reconnects']}
                  for source,state in zip(self.sources,self.states)]
-        return {'backend':'openvino','execution_devices':self.execution_devices,'effective_config':self.effective_config,'tracker':'bytetrack' if self.args.track=='yes' else 'none',
+        stages={key:{'mean':float(np.mean(values)) if values else None,'p95':percentile(values,95)}
+                for key in ['preprocess_ms','queue_ms','inference_post_ms']
+                for values in [[v for state in self.states for v in state[key]]]}
+        return {'backend':'openvino','execution_devices':self.execution_devices,'effective_config':self.effective_config,
+                'model_input_shape':[1,3,self.net_h,self.net_w],
+                'preprocessing':'BGR raw pixels, direct resize' if self.args.detector=='ssd' else 'RGB /255, centered zero letterbox',
+                'tracker':'bytetrack' if self.args.track=='yes' else 'none',
                 'measurement_start_monotonic':self.start,'seconds':elapsed,'error':self.error,
                 'metadata_dropped':self.writer.dropped,'per_camera':cameras,'total_fps':sum(c['fps'] for c in cameras),
-                'minimum_fps':min(c['fps'] for c in cameras)}
+                'minimum_fps':min(c['fps'] for c in cameras),'stage_profile_ms':stages}

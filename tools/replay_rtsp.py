@@ -77,10 +77,18 @@ try:
     time.sleep(2)
     if any(proc.poll() is not None for proc in processes):raise RuntimeError('A replay publisher failed; inspect replay logs')
     def probe(source):
-        with av.open(source['uri'],options={'rtsp_transport':'tcp'},timeout=(5,5)) as reader:
-            frame=next(reader.decode(video=0))
-            if (frame.width,frame.height)!=(source['width'],source['height']):
-                raise RuntimeError('Unexpected replay frame dimensions')
+        deadline=time.monotonic()+60
+        while True:
+            if not running:raise RuntimeError('Replay stopped during readiness check')
+            try:
+                with av.open(source['uri'],options={'rtsp_transport':'tcp'},timeout=(5,5)) as reader:
+                    frame=next(reader.decode(video=0))
+                    if (frame.width,frame.height)!=(source['width'],source['height']):
+                        raise RuntimeError('Unexpected replay frame dimensions')
+                    return
+            except (av.error.FFmpegError,OSError,StopIteration):
+                if time.monotonic()>=deadline:raise
+                time.sleep(.25)
     with ThreadPoolExecutor(max_workers=4) as pool:
         list(pool.map(probe,published))
     (a.output/'sources.json').write_text(json.dumps({'schema_version':'1.0','note':'Local synthetic-file RTSP replay, not physical cameras','sources':published},indent=2))
@@ -103,9 +111,10 @@ try:
 finally:
     for proc in processes:
         if proc is not None and proc.poll() is None:proc.terminate()
+    deadline=time.monotonic()+8
     for proc in processes:
         if proc is None:continue
-        try:proc.wait(timeout=8)
+        try:proc.wait(timeout=max(.01,deadline-time.monotonic()))
         except subprocess.TimeoutExpired:proc.kill();proc.wait()
     if relay_started:subprocess.run(['docker','stop','-t','5',name],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     for log in logs:log.close()

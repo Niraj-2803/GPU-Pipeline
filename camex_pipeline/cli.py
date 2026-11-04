@@ -1,6 +1,7 @@
 import argparse
 import datetime
 import json
+import math
 import os
 import pathlib
 import re
@@ -33,7 +34,19 @@ def arguments():
     p.add_argument('--batch',type=int,choices=[1,2,4,8,16],default=4)
     p.add_argument('--threads',type=int,default=8)
     p.add_argument('--requests',type=int,default=2)
-    p.add_argument('--cpu-streams',type=int,choices=[1,2,4],default=1)
+    p.add_argument('--cpu-streams',choices=['1','2','4','8','AUTO'],default='1')
+    p.add_argument('--cpu-batch',type=int,choices=[1,2,4,8],default=1)
+    p.add_argument('--performance-hint',choices=['LATENCY','THROUGHPUT'],default='LATENCY')
+    p.add_argument('--analysis-size',type=int,choices=[320,384,416,512,640],default=640)
+    p.add_argument('--detector',choices=['yolo','ssd'],default='yolo')
+    p.add_argument('--ssd-class-id',type=int,default=0)
+    p.add_argument('--mux-size',choices=['native','1280x720','960x540','640x360'],default='native')
+    p.add_argument('--mux-timeout-us',type=int,default=10000)
+    p.add_argument('--decode-surfaces',type=int,default=2)
+    p.add_argument('--profile-stages',action='store_true')
+    p.add_argument('--vram-reserve-mib',type=int,default=768)
+    p.add_argument('--startup-timeout',type=int,default=45)
+    p.add_argument('--reconnect-seconds',type=int,default=15)
     p.add_argument('--hyperthreads',action='store_true')
     p.add_argument('--threshold',type=float,default=.25)
     p.add_argument('--nms',type=float,default=.45)
@@ -51,8 +64,12 @@ def arguments():
         p.error('The original model ONNX is required for provenance')
     if a.backend=='openvino' and a.precision=='fp16':
         p.error('CPU supports the FP32 baseline or a separately evaluated INT8 model')
-    if a.backend=='deepstream' and a.precision=='int8':
-        p.error('GPU INT8 is outside this comparison; use the FP32/FP16 reference')
+    if a.backend=='deepstream' and a.analysis_size!=640:
+        p.error('The GPU reference engine requires analysis-size 640')
+    if a.detector=='ssd' and (a.backend!='openvino' or a.cpu_batch!=1):
+        p.error('The SSD CPU profile requires OpenVINO with cpu-batch 1')
+    if not 1000<=a.mux_timeout_us<=100000 or not 0<=a.decode_surfaces<=16:
+        p.error('Invalid GPU buffering parameters')
     return a
 
 def run_gpu(a,sources,folder,run_id,monitor):
@@ -69,6 +86,7 @@ def run_gpu(a,sources,folder,run_id,monitor):
         raise ValueError('GPU reference requires uniform encoded 10 or 30 FPS sources')
     name='camex-cmp-'+run_id.lower()
     device=cuda_ordinal(a.gpu_id)
+    mw,mh=(w,h) if a.mux_size=='native' else tuple(map(int,a.mux_size.split('x')))
     cmd=['docker','run','--rm','--name',name,'--gpus','all',
          '--network','host','--ulimit','nofile=8192:8192','--shm-size','1g',
          '-e','NVIDIA_DRIVER_CAPABILITIES=compute,utility,video',
@@ -76,7 +94,14 @@ def run_gpu(a,sources,folder,run_id,monitor):
          '-e',f'CAMEX_RUN_ID={run_id}','-e',f'CAMEX_SYNC_START={int(all_files)}',
          '-e',f'CAMEX_GPU_ID={device}',
          '-e',f'CAMEX_INFER_BATCH={a.batch}','-e',f'CAMEX_ANALYSIS_FPS={a.analysis_fps}',
+         '-e',f'CAMEX_SOURCE_FPS={sources[0]["fps"]}',
+         '-e',f'CAMEX_STARTUP_TIMEOUT={a.startup_timeout}',
+         '-e',f'CAMEX_RECONNECT_SECONDS={a.reconnect_seconds}',
          '-e',f'CAMEX_MOSAIC_FPS={a.mosaic_fps}',
+         '-e',f'CAMEX_MUX_W={mw}','-e',f'CAMEX_MUX_H={mh}',
+         '-e',f'CAMEX_MUX_TIMEOUT={a.mux_timeout_us}',
+         '-e',f'CAMEX_DECODE_SURFACES={a.decode_surfaces}',
+         '-e',f'CAMEX_PROFILE_STAGES={int(a.profile_stages)}',
          '--mount',f'type=bind,src={folder},dst=/out',
          '--mount',f'type=bind,src={a.engine.resolve()},dst=/models/detector.engine,readonly']
     lines=[]
@@ -95,7 +120,7 @@ net-scale-factor=0.00392156862745098
 model-color-format=0
 model-engine-file=/models/detector.engine
 batch-size={a.batch}
-network-mode={2 if a.precision=='fp16' else 0}
+network-mode={dict(fp32=0,fp16=2,int8=1)[a.precision]}
 num-detected-classes=1
 interval=0
 gie-unique-id=1
@@ -123,7 +148,7 @@ topk=300
         subprocess.run(['docker','stop','-t','8',name],capture_output=True,timeout=20)
     previous={s:signal.signal(s,cancel) for s in [signal.SIGINT,signal.SIGTERM]}
     def watchdog():
-        deadline=time.monotonic()+a.seconds+a.warmup+120
+        deadline=time.monotonic()+a.seconds+a.warmup+a.startup_timeout+30
         while not abort.wait(1):
             if monitor.guard_reason or time.monotonic()>deadline:
                 cancel()
@@ -162,6 +187,7 @@ def summarize(a,sources,folder,run_id,result,monitor):
     latency={k:[] for k in counts}
     tracks={k:set() for k in counts}
     previous={}
+    first_timestamp={}
     validation_errors=[]
     with (folder/'metadata.jsonl').open() as f:
         for line in f:
@@ -173,6 +199,7 @@ def summarize(a,sources,folder,run_id,result,monitor):
                 if cid in previous and epoch==previous[cid][0] and event['source_pts_ns']<=previous[cid][1]:
                     validation_errors.append(f'Non-monotonic source timestamp: {cid}')
                 previous[cid]=(epoch,event['source_pts_ns'])
+                first_timestamp.setdefault(cid,event['source_pts_ns'])
                 if event.get('processing_ms',-1)>=0:
                     latency[cid].append(event['processing_ms'])
                 tracks[cid].update((epoch,o['track_id']) for o in event['objects'] if o['track_id'] is not None)
@@ -182,6 +209,12 @@ def summarize(a,sources,folder,run_id,result,monitor):
     cameras=[{'camera_id':cid,'frames':n,'fps':n/max(seconds,.001),
               'p50_processing_ms':percentile(latency[cid],50),'p95_processing_ms':percentile(latency[cid],95),
               'unique_track_ids':len(tracks[cid])} for cid,n in counts.items()]
+    for source in sources:
+        if not source['uri'].startswith(('rtsp://','rtsps://')) and counts[source['camera_id']]>math.ceil(source['fps']*seconds)+2:
+            validation_errors.append(f"File playback exceeded encoded source rate: {source['camera_id']}")
+        cid=source['camera_id']
+        if not source['uri'].startswith(('rtsp://','rtsps://')) and cid in previous and (previous[cid][1]-first_timestamp[cid])/1e9>seconds+.5:
+            validation_errors.append(f"File timestamp span exceeded wall time: {cid}")
     start=result.get('measurement_start_monotonic') or 0
     status=not(result.get('error') or result.get('interrupted') or result.get('native_exit_code',0) or validation_errors or result.get('metadata_dropped',0))
     status=status and all(c['fps']>=a.analysis_fps*.95 for c in cameras)
@@ -203,6 +236,9 @@ def summarize(a,sources,folder,run_id,result,monitor):
         'metadata_dropped':result.get('metadata_dropped',0),'resources':monitor.summary(start,start+seconds),
         'note':'Processing latency is paced decoded-frame arrival to metadata. It is not physical camera-to-alert latency. Camera-local IDs are not unique-person counts.',
         'native':result}
+    if 'model_input_shape' in result:
+        summary['model_input_shape']=result['model_input_shape']
+        summary['preprocessing']=result['preprocessing']
     provenance=a.model.with_suffix('.provenance.json')
     if provenance.exists():summary['model_provenance']=json.loads(provenance.read_text())
     if a.model.suffix=='.xml':summary['model_weights_sha256']=sha256(a.model.with_suffix('.bin'))
@@ -248,7 +284,7 @@ def main():
         settings['image_id']=image_info.stdout.strip()
     (folder/'settings.json').write_text(json.dumps(settings,indent=2))
     print(f'RUN FOLDER: {folder}',flush=True)
-    with ResourceMonitor(folder,a.gpu_id) as monitor:
+    with ResourceMonitor(folder,a.gpu_id,a.vram_reserve_mib if a.backend=='deepstream' else 0) as monitor:
         try:
             if a.backend=='deepstream':
                 result=run_gpu(a,sources,folder,run_id,monitor)

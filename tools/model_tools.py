@@ -6,7 +6,7 @@ import av
 import numpy as np
 from camex_pipeline.postprocess import letterbox_geometry
 
-def tensor_at(source, seconds):
+def tensor_at(source, seconds, size=640):
     with av.open(source['uri']) as container:
         stream=container.streams.video[0]
         stream.codec_context.thread_count=1
@@ -14,9 +14,9 @@ def tensor_at(source, seconds):
         for frame in container.decode(stream):
             if float(frame.pts*frame.time_base)+.001<seconds:
                 continue
-            w,h,x,y=letterbox_geometry(frame.width,frame.height)
+            w,h,x,y=letterbox_geometry(frame.width,frame.height,size)
             resized=frame.reformat(width=w,height=h,format='rgb24').to_ndarray()
-            image=np.zeros((640,640,3),np.uint8);image[y:y+h,x:x+w]=resized
+            image=np.zeros((size,size,3),np.uint8);image[y:y+h,x:x+w]=resized
             return np.ascontiguousarray(image.transpose(2,0,1)[None],dtype=np.float32)/255.
     raise ValueError('No frame at requested timestamp')
 

@@ -24,6 +24,7 @@ class PersonOutput(nn.Module):
 p=argparse.ArgumentParser()
 p.add_argument('--weights',default='yolov8s.pt')
 p.add_argument('--output',type=pathlib.Path,required=True)
+p.add_argument('--size',type=int,default=640)
 a=p.parse_args()
 os.environ['YOLO_CONFIG_DIR']=str(a.output.resolve().parent/'.ultralytics-export-settings')
 from ultralytics import YOLO
@@ -35,10 +36,11 @@ for module in model.modules():
         module.export=True;module.format='onnx';module.dynamic=False
     elif isinstance(module,C2f):module.forward=module.forward_split
 a.output.parent.mkdir(parents=True,exist_ok=True)
-torch.onnx.export(PersonOutput(model),torch.zeros(1,3,640,640),str(a.output),opset_version=17,
+torch.onnx.export(PersonOutput(model),torch.zeros(1,3,a.size,a.size),str(a.output),opset_version=17,
                   input_names=['input'],output_names=['output'],dynamic_axes={'input':{0:'batch'},'output':{0:'batch'}})
 import onnx
 onnx.checker.check_model(onnx.load(a.output))
 a.output.with_suffix('.export.json').write_text(json.dumps({'model_sha256':hashlib.sha256(a.output.read_bytes()).hexdigest(),
+    'input_size':a.size,
     'source_weights':a.weights,'box_format':'xyxy','output_columns':['x1','y1','x2','y2','person_score','max_class_score']},indent=2))
 print(a.output)

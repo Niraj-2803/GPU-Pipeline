@@ -67,9 +67,12 @@ struct State {
   GstElement* pipeline=nullptr; GMainLoop* loop=nullptr;
   GstElement* output_entry=nullptr;
   std::mutex mutex; std::vector<Camera> cameras;
-  int count=0,batch=8,cols=1,rows=1,tile_w=960,tile_h=540,input_w=1920,input_h=1080;
+  int count=0,batch=8,cols=1,rows=1,tile_w=960,tile_h=540,input_w=1920,input_h=1080,mux_w=1920,mux_h=1080;
   int last_bucket=-1; unsigned long mosaic_frames=0,reported_mosaic=0;
-  double launched=0,start=0,seconds=10,warmup=3,reported_at=0,finish_at=0,measured_seconds=0;
+  double launched=0,start=0,seconds=10,warmup=3,reported_at=0,finish_at=0,measured_seconds=0,playback_wall=0;
+  double source_fps=10;
+  double ready_since=0;
+  double startup_timeout=45;
   double warmup_reported=0;
   bool output=false,tracking=false,error=false,finishing=false,interrupted=false,eos=false,prerolling=false;
   std::string folder,uri; int drop=3;
@@ -97,7 +100,7 @@ struct State {
 static double now_s(){return g_get_monotonic_time()/1e6;}
 static int selected_gpu=0;
 struct SampleContext {State* state;int camera;};
-struct SourceContext {State* state;int camera;GstElement* pace;bool arrived=false;};
+struct SourceContext {State* state;int camera;GstElement* pace;bool arrived=false;unsigned long frames=0;double next_delivery=0;};
 static GstPadProbeReturn source_start(GstPad*,GstPadProbeInfo* info,gpointer data){
   auto& context=*static_cast<SourceContext*>(data);auto& s=*context.state;
   auto buffer=GST_PAD_PROBE_INFO_BUFFER(info);
@@ -109,6 +112,7 @@ static GstPadProbeReturn source_start(GstPad*,GstPadProbeInfo* info,gpointer dat
       auto clock=gst_element_get_clock(s.pipeline);
       if(clock){
         s.playback_epoch=gst_clock_get_time(clock)-gst_element_get_base_time(s.pipeline)+100*GST_MSECOND;
+        s.playback_wall=now_s()+.1;
         gst_object_unref(clock);s.startup_seconds=now_s()-s.launched;
         std::cout<<"SOURCE START all "<<s.count<<" decoders ready after "<<s.startup_seconds<<"s; common file-playback epoch="<<s.playback_epoch/1e9<<"s"<<std::endl;
       }else s.start_failed=true;
@@ -118,6 +122,20 @@ static GstPadProbeReturn source_start(GstPad*,GstPadProbeInfo* info,gpointer dat
       s.start_failed=true;s.startup_ready.notify_all();
     }
     if(s.start_failed)return GST_PAD_PROBE_DROP;
+  }
+  // GStreamer file segments can differ between concurrently opened sources.
+  // Enforce source-rate pacing against one immutable monotonic epoch as well.
+  {
+    const auto sequence=context.frames++;
+    if(!context.next_delivery)context.next_delivery=s.playback_wall;
+    const double due=context.next_delivery;
+    while(!s.sampling_stop.load(std::memory_order_relaxed)){
+      const double remaining=due-now_s();if(remaining<=0)break;
+      g_usleep(gulong(std::min(remaining,.025)*1e6));
+    }
+    const double period=double(std::max(1,s.drop))/s.source_fps;
+    context.next_delivery=std::max(due+period,now_s()+period);
+    if(context.camera==0 && sequence%100==0)std::cout<<"FILE PACE sequence="<<sequence<<" elapsed="<<now_s()-s.playback_wall<<std::endl;
   }
   // One immutable offset assigns a common playback start to stored files.
   // Keep source spacing and every decoded frame; never reset the clock mid-run.
@@ -232,10 +250,19 @@ static GstPadProbeReturn inference(GstPad*,GstPadProbeInfo* info,gpointer data){
     auto& c=s.cameras[f->source_id];c.seen=true;c.last_seen=wall;c.sequence=f->frame_num;
     if(c.last_processed_wall && wall-c.last_processed_wall>2.0)c.tracking_epoch++;
     c.last_processed_wall=wall;
-    if(!s.prerolling && !s.start && std::all_of(s.cameras.begin(),s.cameras.end(),[](const Camera& c){return c.seen;})){
-      s.start=wall+s.warmup;s.reported_at=s.start;
-      s.sampling_start.store(s.start,std::memory_order_relaxed);
-      std::cout<<"READY all "<<s.count<<" sources producing output; warming up for "<<s.warmup<<" seconds"<<std::endl;
+    if(!s.prerolling && (!s.start || wall<s.start)){
+      const bool fresh=std::all_of(s.cameras.begin(),s.cameras.end(),[wall](const Camera& c){return c.seen && wall-c.last_seen<1.0;});
+      if(!fresh){
+        if(s.start)std::cout<<"STARTUP source stalled during warmup; waiting for fresh output"<<std::endl;
+        s.start=0;s.ready_since=0;s.sampling_start.store(0,std::memory_order_relaxed);
+      }else if(!s.start){
+        if(!s.ready_since)s.ready_since=wall;
+        if(wall-s.ready_since>=2.0){
+          s.start=wall+s.warmup;s.reported_at=s.start;
+          s.sampling_start.store(s.start,std::memory_order_relaxed);
+          std::cout<<"READY all "<<s.count<<" sources fresh for 2 seconds; warming up for "<<s.warmup<<" seconds"<<std::endl;
+        }
+      }
     }
     bool measuring=s.start && wall>=s.start && wall<s.start+s.seconds && !s.finishing;
     bool unique=f->buf_pts!=c.last_pts;
@@ -285,10 +312,11 @@ static GstPadProbeReturn inference(GstPad*,GstPadProbeInfo* info,gpointer data){
       if(publish){
         if(event_comma)event<<",";event_comma=true;
         auto r=obj->rect_params;
-        const auto x1=std::clamp(double(r.left),0.0,double(s.input_w));
-        const auto y1=std::clamp(double(r.top),0.0,double(s.input_h));
-        const auto x2=std::clamp(double(r.left+r.width),x1,double(s.input_w));
-        const auto y2=std::clamp(double(r.top+r.height),y1,double(s.input_h));
+        const double sx=double(s.input_w)/s.mux_w,sy=double(s.input_h)/s.mux_h;
+        const auto x1=std::clamp(double(r.left)*sx,0.0,double(s.input_w));
+        const auto y1=std::clamp(double(r.top)*sy,0.0,double(s.input_h));
+        const auto x2=std::clamp(double(r.left+r.width)*sx,x1,double(s.input_w));
+        const auto y2=std::clamp(double(r.top+r.height)*sy,y1,double(s.input_h));
         event<<"{\"class_id\":0,\"label\":\"person\",\"confidence\":"<<(std::isfinite(obj->confidence)?obj->confidence:-1)
           <<",\"track_id\":"<<(assigned?"\""+std::to_string(obj->object_id)+"\"":"null")
           <<",\"bbox_xyxy\":["<<x1<<","<<y1<<","<<x2<<","<<y2<<"]}";
@@ -406,7 +434,7 @@ static gboolean tick(gpointer data){
     if(!s.finishing && ((s.start && wall>=s.start+s.seconds) || s.interrupted)){
       s.finishing=true;s.sampling_stop.store(true,std::memory_order_relaxed);s.finish_at=wall;s.measured_seconds=s.start?std::clamp(wall-s.start,0.0,s.seconds):0;finish=true;
     }
-    if((!s.start && wall-s.launched>45) || (s.finishing && wall-s.finish_at>10)){
+    if((!s.start && wall-s.launched>s.startup_timeout) || (s.finishing && wall-s.finish_at>10)){
       s.error=true;std::cerr<<"ERROR startup or output-finalization timeout"<<std::endl;g_main_loop_quit(s.loop);return G_SOURCE_REMOVE;
     }
   }
@@ -439,6 +467,8 @@ int main(int argc,char** argv){
   if(std::getenv("CAMEX_MOSAIC_FPS"))s.preview_fps=std::stoi(std::getenv("CAMEX_MOSAIC_FPS"));
   if(s.preview_fps!=5 && s.preview_fps!=10)return 2;
   if(std::getenv("CAMEX_ANALYSIS_FPS"))s.target_fps=std::stoi(std::getenv("CAMEX_ANALYSIS_FPS"));
+  if(std::getenv("CAMEX_SOURCE_FPS"))s.source_fps=std::stod(std::getenv("CAMEX_SOURCE_FPS"));
+  if(std::getenv("CAMEX_STARTUP_TIMEOUT"))s.startup_timeout=std::stod(std::getenv("CAMEX_STARTUP_TIMEOUT"));
   if(s.target_fps<1 || s.target_fps>30)return 2;
   if(std::getenv("CAMEX_INFER_BATCH")) s.batch=std::stoi(std::getenv("CAMEX_INFER_BATCH"));
   if(argc>=10){s.input_w=std::stoi(argv[8]);s.input_h=std::stoi(argv[9]);}
@@ -469,6 +499,7 @@ int main(int argc,char** argv){
   // NvInfer independently splits these buffers into TensorRT batches of eight.
   int mux_w=std::getenv("CAMEX_MUX_W")?std::stoi(std::getenv("CAMEX_MUX_W")):s.input_w;
   int mux_h=std::getenv("CAMEX_MUX_H")?std::stoi(std::getenv("CAMEX_MUX_H")):s.input_h;
+  s.mux_w=mux_w;s.mux_h=mux_h;
   int mux_timeout=std::getenv("CAMEX_MUX_TIMEOUT")?std::stoi(std::getenv("CAMEX_MUX_TIMEOUT")):10000;
   g_object_set(mux,"batch-size",s.count,"width",mux_w,"height",mux_h,"live-source",TRUE,"batched-push-timeout",mux_timeout,"sync-inputs",FALSE,nullptr);
   g_object_set(infer,"config-file-path",argv[2],"batch-size",s.batch,nullptr);
@@ -524,7 +555,9 @@ int main(int argc,char** argv){
       if(g_object_class_find_property(G_OBJECT_GET_CLASS(source),"source-id"))g_object_set(source,"source-id",i,nullptr);
       if(g_object_class_find_property(G_OBJECT_GET_CLASS(source),"select-rtp-protocol"))g_object_set(source,"select-rtp-protocol",4,nullptr);
       if(g_object_class_find_property(G_OBJECT_GET_CLASS(source),"latency"))g_object_set(source,"latency",100,nullptr);
-      if(g_object_class_find_property(G_OBJECT_GET_CLASS(source),"rtsp-reconnect-interval"))g_object_set(source,"rtsp-reconnect-interval",15,nullptr);
+      if(g_object_class_find_property(G_OBJECT_GET_CLASS(source),"drop-on-latency"))g_object_set(source,"drop-on-latency",TRUE,nullptr);
+      const int reconnect=std::getenv("CAMEX_RECONNECT_SECONDS")?std::stoi(std::getenv("CAMEX_RECONNECT_SECONDS")):15;
+      if(g_object_class_find_property(G_OBJECT_GET_CLASS(source),"rtsp-reconnect-interval"))g_object_set(source,"rtsp-reconnect-interval",reconnect,nullptr);
       if(g_object_class_find_property(G_OBJECT_GET_CLASS(source),"rtsp-reconnect-attempts"))g_object_set(source,"rtsp-reconnect-attempts",-1,nullptr);
     }
     g_object_set(pace,"sync",TRUE,nullptr);g_object_set(queue,"max-size-buffers",2,"max-size-bytes",0,"max-size-time",guint64(0),"leaky",2,nullptr);

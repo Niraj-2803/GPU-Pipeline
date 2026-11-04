@@ -6,6 +6,7 @@ import pathlib
 import nncf
 import openvino as ov
 from model_tools import tensor_at
+from camex_pipeline.common import load_sources
 
 p=argparse.ArgumentParser()
 p.add_argument('--model',type=pathlib.Path,required=True)
@@ -14,7 +15,7 @@ p.add_argument('--output',type=pathlib.Path,required=True)
 p.add_argument('--views',type=int,default=20)
 p.add_argument('--quantize-head',action='store_true')
 a=p.parse_args()
-sources=json.loads(a.sources.read_text())['sources'][:a.views]
+sources=load_sources(a.sources)[:a.views]
 samples=[tensor_at(s,t) for s in sources for t in (0,10,20,40,50)]
 core=ov.Core();model=core.read_model(a.model);model.reshape({model.input(0):[1,3,640,640]})
 # Keep the YOLO detection head in floating point; quantify its effect separately.

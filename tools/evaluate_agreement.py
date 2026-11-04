@@ -7,7 +7,7 @@ import numpy as np
 import openvino as ov
 from model_tools import tensor_at,match_boxes
 from camex_pipeline.postprocess import decode_person_output
-from camex_pipeline.common import cuda_ordinal
+from camex_pipeline.common import cuda_ordinal, load_sources
 
 p=argparse.ArgumentParser()
 p.add_argument('--reference',type=pathlib.Path,required=True)
@@ -18,7 +18,7 @@ p.add_argument('--gpu-id',type=int,default=1)
 p.add_argument('--views',type=int,default=20)
 p.add_argument('--image',default='camex-cmp-deepstream:7.0-review')
 a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True)
-sources=json.loads(a.sources.read_text())['sources'][:a.views]
+sources=load_sources(a.sources)[:a.views]
 cases=[(s,t) for s in sources for t in (5,25,45)]
 tensors=[tensor_at(s,t) for s,t in cases]
 core=ov.Core();model=core.read_model(a.reference);model.reshape({model.input(0):[1,3,640,640]})

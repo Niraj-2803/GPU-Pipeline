@@ -22,6 +22,8 @@ with a.file.open() as f:
             if not a.follow:break
             time.sleep(.05);continue
         if not line.endswith('\n'):
+            if not a.follow:
+                raise ValueError('Incomplete final metadata line')
             f.seek(position);time.sleep(.05);continue
         event=json.loads(line)
         if event.get('schema_version')!='1.0':raise ValueError('Unsupported schema')

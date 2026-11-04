@@ -31,18 +31,23 @@ container images staged in advance.
 ```bash
 sudo apt-get update
 sudo apt-get install -y git python3-venv python3-pip ffmpeg libgl1 libglib2.0-0 curl
-git clone --branch codex/cpu-pipeline-delivery-20261105 https://github.com/Niraj-2803/GPU-Pipeline.git
+git clone --branch pipeline-reference-20261105 https://github.com/Niraj-2803/GPU-Pipeline.git
 cd GPU-Pipeline
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements-cpu.txt
 export CAMEX_PYTHON="$PWD/.venv/bin/python"
 ```
 
-Both delivery branches contain the common implementation and accept explicit `--backend` selection. The CPU branch defaults to OpenVINO; the GPU branch defaults to DeepStream. Examples specify the backend to remove ambiguity.
-For a GPU-oriented checkout, replace the clone command's branch with
-`codex/gpu-pipeline-delivery-20261105`.
+`requirements-lock-ubuntu.txt` records the full clean-verification environment.
+Use it instead of `requirements-cpu.txt` when reproducing the exact tested
+Ubuntu/Python package set; other platforms still need their own validation.
 
-Review branches: `codex/cpu-pipeline-delivery-20261105` and `codex/gpu-pipeline-delivery-20261105`. Their PR targets are the existing `CPU-Pipeline_Development` and `GPU-Pipeline-Development` branches. Until merged, cloning an old development branch will **not** get this update.
+The command uses the frozen release tag for reproducibility. Both backends are
+included; examples specify `--backend` to remove ambiguity. For a working PR
+checkout, use either delivery branch named below instead of the tag.
+The CPU branch/tag defaults to OpenVINO; the GPU branch defaults to DeepStream.
+
+Review branches: `codex/cpu-pipeline-delivery-20261105` and `codex/gpu-pipeline-delivery-20261105`. Their PR targets are the existing `CPU-Pipeline_Development` and `GPU-Pipeline-Development` branches. Until merged, cloning an old development branch will **not** get this update. After merge, those development branches provide ongoing updates; the tag remains the fixed experiment version.
 
 Use **`run_pipeline.sh`**. The original `run.sh`, `scripts/`, old engines and historical results are retained only as legacy prepared-Dell experiments. They are not the portable entrypoint.
 
@@ -58,10 +63,12 @@ Checksum-verified release archives contain synthetic airport clips, their source
 .venv/bin/python tools/fetch_demo.py --profile full
 ```
 
-These print `data/mini/sources.json` and `data/full/sources.json`. `assets/demo_assets.json` records URLs, sizes and SHA-256 hashes; extracted files are also verified. For an offline archive downloaded from the release page:
+These print `data/mini/sources.json` and `data/full/sources.json`. `assets/demo_assets.json` records URLs, sizes and SHA-256 hashes; extracted files are also verified.
 Use only the bundle needed for your example: mini for the CPU quickstart, full
 for the 50-feed GPU test. The full bundle also works for CPU tests when its
 source path is substituted.
+
+For an offline archive downloaded from the release page:
 
 ```bash
 .venv/bin/python tools/fetch_demo.py --profile full --archive /path/to/camex-demo-full50.tar.gz
@@ -189,6 +196,8 @@ Use administrator-provided URLs; vendor paths vary. URL-encode special character
 Point either backend's `--sources` to this file. IDs must be unique and use letters, digits, `_` or `-`. Relative video paths resolve relative to the configuration file. GPU inputs must share one resolution and encoded FPS per run: FHD or 2560x1440, at 10 or 30 FPS. Use separate workers for different GPU source profiles. H.264/H.265 RTSP are handled by the decode stack; qualification used H.265.
 
 `--analysis-fps 10` does not reconfigure a camera. A 30-FPS camera has a different decode workload. `-res` and `--source-fps` validate settings; they do not resize/re-encode input.
+For the published workload, configure a camera-side 10-FPS analytics stream.
+Merely reducing inference to 10 FPS does not reproduce 10-FPS input decoding.
 
 ## 6. Run the verified RTSP replay profiles
 

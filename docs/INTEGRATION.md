@@ -17,6 +17,12 @@ Physical camera RTSP OR local synthetic RTSP replay
 
 This repository owns decode, person detection, camera-local tracking and metadata export. CAMEX retains camera configuration, authorization, calibration, multi-camera association, business rules, alert delivery, storage and UI. The included adapter does not implement those product services.
 
+The Python launcher/configuration/monitor run in the host virtual environment.
+The GPU worker runs in the DeepStream Docker image; the CPU worker runs in the
+host virtual environment. If the CAMEX backend is containerized, mount the
+chosen run directory read-only into that backend or forward events through
+its existing internal transport. Restrict file access to the service account.
+
 ## Input contract
 
 The source JSON contains `schema_version: "1.0"` and a nonempty `sources` list.
@@ -53,6 +59,12 @@ Read [CONTRACT.md](CONTRACT.md) and the machine-readable [JSON schema](metadata.
 The identity key is `(run_id, camera_id, tracking_epoch, track_id)`. It is not a person identity across cameras. CPU ByteTrack and GPU NvDCF can associate boxes differently; shared JSON does not imply identical IDs or tracking accuracy.
 
 Media timestamps are not UTC exposure timestamps. GPU RTSP uses pipeline PTS and CPU RTSP uses stream-relative PTS. Do not calculate camera-to-alert latency by subtracting these from wall-clock UTC. Introduce a synchronized capture timestamp or visual clock for that separate test.
+
+This export contains metadata, **not original frames or crop bytes**. If CAMEX
+needs pixels for face recognition, appearance models or evidence recording,
+design a bounded crop/frame-sharing branch or a DeepStream secondary-model
+stage. Do not silently reintroduce full CPU decoding of every feed. Pixel
+transport and those additional models are not included in this release.
 
 ## Minimal consumer
 

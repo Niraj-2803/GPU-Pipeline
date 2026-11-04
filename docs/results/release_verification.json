@@ -1,4 +1,65 @@
 {
-  "status": "pending_clean_checkout_verification",
-  "note": "This file is updated before publishing the review branches. Original benchmark evidence is in summary.json."
+  "status": "passed",
+  "checked_at_jst": "2026-11-05T01:25:54.951091+09:00",
+  "runtime_test_commit": "6934576",
+  "scope": "Fresh Git checkout and new virtual environment; docs/lock/status-only updates follow these tests.",
+  "tests_passed": 37,
+  "asset_profiles_verified": [
+    "mini",
+    "full"
+  ],
+  "new_int8_engine_built": true,
+  "cases": [
+    {
+      "backend": "openvino",
+      "source_count": 5,
+      "seconds": 30.0,
+      "minimum_fps": 9.966666666666667,
+      "p95_processing_ms": 73.17879394940974,
+      "model_sha256": "9216c8f5e8e035008b71be94896da4c5ea995d0b87d02b16200512228ac07c34",
+      "engine_sha256": null,
+      "metadata_dropped": 0,
+      "throughput_check": "PASS"
+    },
+    {
+      "backend": "deepstream",
+      "source_count": 50,
+      "seconds": 30.0,
+      "minimum_fps": 9.966666666666667,
+      "p95_processing_ms": 70.89505,
+      "model_sha256": "75b32bc520027b73d9b44acbb167ea5f78bf9750f5415e4f0985291cea73f7de",
+      "engine_sha256": "0ccda86e10520ee4e15dc9c99588b691ffafcc57f1c180fe256aa75e92605c16",
+      "metadata_dropped": 0,
+      "throughput_check": "PASS"
+    }
+  ],
+  "model_agreement": {
+    "gpu": {
+      "frames": 100,
+      "reference_detections": 1216,
+      "candidate_detections": 1181,
+      "matched": 1168,
+      "precision_against_reference": 0.9889923793395428,
+      "recall_against_reference": 0.9605263157894737,
+      "candidate_threshold": 0.25,
+      "candidate_detector": "yolo"
+    },
+    "cpu": {
+      "frames": 60,
+      "reference_detections": 738,
+      "candidate_detections": 716,
+      "matched": 608,
+      "precision_against_reference": 0.8491620111731844,
+      "recall_against_reference": 0.8238482384823849,
+      "candidate_threshold": 0.5,
+      "candidate_detector": "ssd"
+    }
+  },
+  "restored_original_services": true,
+  "restored_annotated_streams": 4,
+  "notes": [
+    "Smoke tests are 30 seconds, not new maximum-capacity tests. See the original 600-second results.",
+    "The CPU SSD model is not accuracy-equivalent to the GPU YOLOv8s model.",
+    "No private camera URLs, credentials or full raw logs are included."
+  ]
 }

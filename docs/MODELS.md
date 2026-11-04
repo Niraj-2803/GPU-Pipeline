@@ -54,6 +54,8 @@ commercial deployment rights before incorporation into a client product.
 preprocessed tensors, threshold and NMS. Calibration samples and evaluation
 timestamps are separate. This detects regressions but does not establish real
 world accuracy: use independently labeled footage for that claim.
+The delivered 60-frame holdout uses different timestamps from the same 20
+synthetic clips, not an independent camera/site dataset.
 
 Treat GPU FP16 and CPU INT8 as different precision modes. Report their accuracy
 or agreement results alongside their throughput. Do not conflate a change of

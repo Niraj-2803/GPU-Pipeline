@@ -24,6 +24,7 @@ GPU or TensorRT version.
 
 The verified host is Ubuntu 22.04 x86-64. See the delivered comparison report
 for exact hardware, versions, measured results and limitations.
+The local evidence summary is in [validation notes](docs/VALIDATION.md).
 
 ```bash
 sudo apt-get update

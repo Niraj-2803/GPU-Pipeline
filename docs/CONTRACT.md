@@ -16,7 +16,8 @@ The file is newline-delimited UTF-8 JSON. Each line is self-contained.
 ```
 
 - `width`, `height` and `bbox_xyxy` refer to the original decoded image, not the
-  640x640 detector input or mosaic tile. Bounds are clipped to the image.
+  detector input (640x640 for GPU YOLO, 512x512 for the fast CPU SSD profile)
+  or mosaic tile. Bounds are clipped to the image.
 - IDs are strings to preserve 64-bit tracker IDs through JavaScript consumers.
   `track_id: null` means no confirmed association for that detection.
 - `tracking_epoch` increments after a processing gap longer than two seconds.

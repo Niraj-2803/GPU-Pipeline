@@ -1,15 +1,11 @@
-# Local Review Status
+# Delivery status
 
-This work is a local review candidate. The original shared branches are not
-changed until Abdul reviews the code, results and videos.
+This evaluation and integration reference is delivered through separate CPU
+and GPU review PRs. The PRs are not merged automatically. Read the root README,
+[results](RESULTS.md), [integration guide](INTEGRATION.md), and model license
+notes before adopting a profile.
 
-The original imported experiment files and their prepared-Dell commands are
-preserved. The portable adapter, CPU implementation and new documentation are
-separate additions. Historical results are not relabeled as current runs.
-
-The model/data review bundle is delivered separately because source media and
-hardware-specific engines should not be committed to the public repository.
-
-Current and final measurements are listed in the accompanying comparison
-report. No result from this local machine proves the client's full CAMEX
-application throughput, failover capacity or alert accuracy.
+The faster CPU detector requires application-specific quality acceptance.
+The 100-input GPU stress result is not a recommended deployment profile.
+No client machine, real camera configuration or complete CAMEX product was
+changed by this delivery.

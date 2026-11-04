@@ -22,6 +22,18 @@ p.add_argument('--repeat',type=int,default=1)
 p.add_argument('--gpu-id',type=int,default=0)
 p.add_argument('--threads',type=int,default=8)
 p.add_argument('--cpu-streams',type=int,default=1)
+p.add_argument('--requests',type=int,default=2)
+p.add_argument('--cpu-batch',type=int,default=1)
+p.add_argument('--detector',choices=['yolo','ssd'],default='yolo')
+p.add_argument('--threshold',type=float,default=.25)
+p.add_argument('--analysis-size',type=int,default=640)
+p.add_argument('--performance-hint',choices=['LATENCY','THROUGHPUT'],default='LATENCY')
+p.add_argument('--batch',type=int,default=4)
+p.add_argument('--image',default='camex-cmp-deepstream:7.0-review')
+p.add_argument('--mux-size',default='native')
+p.add_argument('--mux-timeout-us',type=int,default=10000)
+p.add_argument('--startup-timeout',type=int,default=45)
+p.add_argument('--reconnect-seconds',type=int,default=15)
 p.add_argument('--hyperthreads',action='store_true')
 p.add_argument('--analysis-fps',type=int,default=10)
 p.add_argument('--output',type=pathlib.Path,required=True)
@@ -38,6 +50,10 @@ for n in [int(n) for n in a.counts.split(',')]:
              '-n',str(n),'--model',str(a.model.resolve()),'--precision',a.precision,'--gpu-id',str(a.gpu_id),
              '--threads',str(a.threads),'--cpu-streams',str(a.cpu_streams),'--analysis-fps',str(a.analysis_fps),'--seconds',str(a.seconds),'--warmup',str(a.warmup),
              '--run-dir',str(folder.resolve()),'-out','yes' if a.record else 'no','-track','no' if a.no_track else 'yes']
+        cmd+=['--requests',str(a.requests),'--cpu-batch',str(a.cpu_batch),'--detector',a.detector,
+              '--threshold',str(a.threshold),'--analysis-size',str(a.analysis_size),'--performance-hint',a.performance_hint,
+              '--batch',str(a.batch),'--image',a.image,'--mux-size',a.mux_size,'--mux-timeout-us',str(a.mux_timeout_us),
+              '--startup-timeout',str(a.startup_timeout),'--reconnect-seconds',str(a.reconnect_seconds)]
         if a.engine:cmd+=['--engine',str(a.engine.resolve())]
         if a.hyperthreads:cmd+=['--hyperthreads']
         print('TRIAL',name,flush=True)

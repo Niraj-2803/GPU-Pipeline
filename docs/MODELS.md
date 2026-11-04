@@ -3,7 +3,7 @@
 ## Exact reference
 
 The original benchmark used a person-output YOLOv8s ONNX, rather than a generic
-stock YOLO export. The local review model bundle contains that file, with this
+stock YOLO export. The release demo bundles contain that file, with this
 SHA-256:
 
 `75b32bc520027b73d9b44acbb167ea5f78bf9750f5415e4f0985291cea73f7de`
@@ -47,6 +47,32 @@ settings directory.
 
 Model weights and inference libraries have their own license terms. Check
 commercial deployment rights before incorporation into a client product.
+
+## Qualified GPU INT8 recipe
+
+The README uses `tools/prepare_calibration.py` followed by
+`tools/build_engine.py --precision int8 --calibration-dir ...`. The calibration
+tool creates RGB uint8 letterbox frames. The native builder converts them to
+NCHW /255, uses MinMax calibration with batches of eight, and preserves the
+YOLOv8 detection-head layers in FP16. The optimized profile is batch 8 with a
+maximum batch of 16. Preparation and build manifests remain beside the output.
+The complete 50-view recipe uses 500 frames; changing the model, data or recipe
+requires a new quality/performance check.
+
+## CPU SSD model
+
+`tools/fetch_cpu_model.py` downloads and verifies the official Open Model Zoo
+`person-detection-0202` FP16-INT8 XML and BIN. Its architecture is MobileNetV2/SSD,
+not YOLOv8s. It expects raw BGR resized to 512x512 and emits normalized SSD boxes;
+`--detector ssd --ssd-class-id 0` selects the correct parser. The tested confidence
+threshold is 0.5. No YOLO letterbox or /255 normalization is applied to it.
+
+Official specification and license references:
+- https://docs.openvino.ai/2023.3/omz_models_model_person_detection_0202.html
+- https://github.com/openvinotoolkit/open_model_zoo/blob/master/models/intel/person-detection-0202/model.yml
+
+This model improves CPU throughput but is not accuracy-equivalent. Keep the
+original YOLO path available and validate the selected model on client footage.
 
 ## Quality checks
 

@@ -10,6 +10,7 @@
 
 # Local runs, credentials, model exports and build products
 .venv/
+.venv*/
 venv/
 __pycache__/
 .pytest_cache/
@@ -21,6 +22,7 @@ quality/
 runs/
 logs/
 local-replay/
+/local-replay*/
 replay/
 build/
 data/

@@ -1,0 +1,639 @@
+{
+  "measured_dates_jst": "2026-11-04 to 2026-11-05",
+  "hardware": {
+    "cpu": "AMD Ryzen 7 2700",
+    "physical_cores": 8,
+    "logical_cpus": 16,
+    "ram_gb_approx": 24,
+    "gpu": "NVIDIA GeForce RTX 3080",
+    "vram_gb": 10,
+    "os": "Ubuntu 22.04"
+  },
+  "accepted_profiles": [
+    {
+      "label": "GPU YOLOv8s INT8/FP16 head",
+      "backend": "deepstream",
+      "tracker": "nvdcf",
+      "precision": "int8",
+      "source_count": 50,
+      "source_width": 1920,
+      "source_height": 1080,
+      "encoded_fps": 10,
+      "analysis_target_fps": 10,
+      "seconds": 600.0,
+      "minimum_fps": 9.998333333333333,
+      "total_fps": 499.985,
+      "p95_processing_ms": 74.042,
+      "model_sha256": "75b32bc520027b73d9b44acbb167ea5f78bf9750f5415e4f0985291cea73f7de",
+      "engine_sha256": "578ac90f9b0b1391b6efdd14e442f3a8e3ac51248452af3203ffdd1edbbba67a",
+      "resources": {
+        "cpu_percent": {
+          "mean": 23.7209705372617,
+          "max": 27.8,
+          "min": 20.3
+        },
+        "ram_used_mib": {
+          "mean": 13496.131384044627,
+          "max": 13552.59765625,
+          "min": 13426.3125
+        },
+        "ram_available_mib": {
+          "mean": 10463.349084705373,
+          "max": 10533.16796875,
+          "min": 10406.8828125
+        },
+        "gpu_percent": {
+          "mean": 34.89774696707106,
+          "max": 48.0,
+          "min": 23.0
+        },
+        "decoder_percent": {
+          "mean": 33.75043327556326,
+          "max": 48.0,
+          "min": 25.0
+        },
+        "encoder_percent": {
+          "mean": 0.0,
+          "max": 0.0,
+          "min": 0.0
+        },
+        "vram_mib": {
+          "mean": 4840.0,
+          "max": 4840.0,
+          "min": 4840.0
+        },
+        "temperature_c": {
+          "mean": 56.07972270363951,
+          "max": 59.0,
+          "min": 48.0
+        },
+        "power_w": {
+          "mean": 155.88069324090122,
+          "max": 196.13,
+          "min": 150.92
+        }
+      },
+      "metadata_dropped": 0,
+      "error": false,
+      "per_camera": [
+        {
+          "camera_id": "C01",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.4465,
+          "p95_processing_ms": 73.90065000000001,
+          "unique_track_ids": 639
+        },
+        {
+          "camera_id": "C02",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.914,
+          "p95_processing_ms": 73.7077,
+          "unique_track_ids": 589
+        },
+        {
+          "camera_id": "C03",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 49.5165,
+          "p95_processing_ms": 73.6714,
+          "unique_track_ids": 491
+        },
+        {
+          "camera_id": "C04",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.3855,
+          "p95_processing_ms": 72.90455,
+          "unique_track_ids": 473
+        },
+        {
+          "camera_id": "C05",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.4645,
+          "p95_processing_ms": 74.01920000000001,
+          "unique_track_ids": 371
+        },
+        {
+          "camera_id": "C06",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.3745,
+          "p95_processing_ms": 74.32545,
+          "unique_track_ids": 500
+        },
+        {
+          "camera_id": "C07",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 49.4805,
+          "p95_processing_ms": 74.2468,
+          "unique_track_ids": 455
+        },
+        {
+          "camera_id": "C08",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 49.1695,
+          "p95_processing_ms": 73.8592,
+          "unique_track_ids": 305
+        },
+        {
+          "camera_id": "C09",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 51.053,
+          "p95_processing_ms": 73.494,
+          "unique_track_ids": 366
+        },
+        {
+          "camera_id": "C10",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 48.736000000000004,
+          "p95_processing_ms": 73.80940000000002,
+          "unique_track_ids": 269
+        },
+        {
+          "camera_id": "C11",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.5415,
+          "p95_processing_ms": 73.95915000000001,
+          "unique_track_ids": 484
+        },
+        {
+          "camera_id": "C12",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 49.658,
+          "p95_processing_ms": 74.1311,
+          "unique_track_ids": 491
+        },
+        {
+          "camera_id": "C13",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 49.885999999999996,
+          "p95_processing_ms": 74.13325,
+          "unique_track_ids": 348
+        },
+        {
+          "camera_id": "C14",
+          "frames": 5999,
+          "fps": 9.998333333333333,
+          "p50_processing_ms": 49.516,
+          "p95_processing_ms": 74.6722,
+          "unique_track_ids": 320
+        },
+        {
+          "camera_id": "C15",
+          "frames": 5999,
+          "fps": 9.998333333333333,
+          "p50_processing_ms": 49.325,
+          "p95_processing_ms": 75.13829999999999,
+          "unique_track_ids": 352
+        },
+        {
+          "camera_id": "C16",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 48.634,
+          "p95_processing_ms": 74.06485000000002,
+          "unique_track_ids": 685
+        },
+        {
+          "camera_id": "C17",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 48.9,
+          "p95_processing_ms": 73.96865000000001,
+          "unique_track_ids": 370
+        },
+        {
+          "camera_id": "C18",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 48.919,
+          "p95_processing_ms": 73.30905000000001,
+          "unique_track_ids": 301
+        },
+        {
+          "camera_id": "C19",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 48.754999999999995,
+          "p95_processing_ms": 73.2035,
+          "unique_track_ids": 482
+        },
+        {
+          "camera_id": "C20",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.992000000000004,
+          "p95_processing_ms": 73.70524999999999,
+          "unique_track_ids": 283
+        },
+        {
+          "camera_id": "C21",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.513999999999996,
+          "p95_processing_ms": 74.01315000000001,
+          "unique_track_ids": 429
+        },
+        {
+          "camera_id": "C22",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.8675,
+          "p95_processing_ms": 74.00555000000001,
+          "unique_track_ids": 399
+        },
+        {
+          "camera_id": "C23",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.677499999999995,
+          "p95_processing_ms": 73.28120000000001,
+          "unique_track_ids": 418
+        },
+        {
+          "camera_id": "C24",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.3855,
+          "p95_processing_ms": 73.63685,
+          "unique_track_ids": 185
+        },
+        {
+          "camera_id": "C25",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 49.305,
+          "p95_processing_ms": 73.79815,
+          "unique_track_ids": 246
+        },
+        {
+          "camera_id": "C26",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.0225,
+          "p95_processing_ms": 73.91065000000002,
+          "unique_track_ids": 298
+        },
+        {
+          "camera_id": "C27",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.797,
+          "p95_processing_ms": 73.62150000000001,
+          "unique_track_ids": 152
+        },
+        {
+          "camera_id": "C28",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 49.620000000000005,
+          "p95_processing_ms": 74.36160000000001,
+          "unique_track_ids": 226
+        },
+        {
+          "camera_id": "C29",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.0995,
+          "p95_processing_ms": 73.5061,
+          "unique_track_ids": 317
+        },
+        {
+          "camera_id": "C30",
+          "frames": 5999,
+          "fps": 9.998333333333333,
+          "p50_processing_ms": 49.87,
+          "p95_processing_ms": 75.12579999999997,
+          "unique_track_ids": 590
+        },
+        {
+          "camera_id": "C31",
+          "frames": 5999,
+          "fps": 9.998333333333333,
+          "p50_processing_ms": 49.239,
+          "p95_processing_ms": 74.88829999999999,
+          "unique_track_ids": 305
+        },
+        {
+          "camera_id": "C32",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.4695,
+          "p95_processing_ms": 73.76825,
+          "unique_track_ids": 428
+        },
+        {
+          "camera_id": "C33",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.0065,
+          "p95_processing_ms": 74.60920000000002,
+          "unique_track_ids": 356
+        },
+        {
+          "camera_id": "C34",
+          "frames": 5999,
+          "fps": 9.998333333333333,
+          "p50_processing_ms": 49.285,
+          "p95_processing_ms": 74.05109999999999,
+          "unique_track_ids": 416
+        },
+        {
+          "camera_id": "C35",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 48.5865,
+          "p95_processing_ms": 74.1103,
+          "unique_track_ids": 152
+        },
+        {
+          "camera_id": "C36",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.521,
+          "p95_processing_ms": 74.2904,
+          "unique_track_ids": 158
+        },
+        {
+          "camera_id": "C37",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.538,
+          "p95_processing_ms": 73.4847,
+          "unique_track_ids": 228
+        },
+        {
+          "camera_id": "C38",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.585499999999996,
+          "p95_processing_ms": 73.1637,
+          "unique_track_ids": 434
+        },
+        {
+          "camera_id": "C39",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 49.1325,
+          "p95_processing_ms": 73.74425,
+          "unique_track_ids": 379
+        },
+        {
+          "camera_id": "C40",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.3795,
+          "p95_processing_ms": 73.60255000000001,
+          "unique_track_ids": 379
+        },
+        {
+          "camera_id": "C41",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 49.6425,
+          "p95_processing_ms": 73.8613,
+          "unique_track_ids": 283
+        },
+        {
+          "camera_id": "C42",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.54,
+          "p95_processing_ms": 74.15160000000002,
+          "unique_track_ids": 203
+        },
+        {
+          "camera_id": "C43",
+          "frames": 5999,
+          "fps": 9.998333333333333,
+          "p50_processing_ms": 49.418,
+          "p95_processing_ms": 74.5073,
+          "unique_track_ids": 435
+        },
+        {
+          "camera_id": "C44",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.1225,
+          "p95_processing_ms": 74.35820000000001,
+          "unique_track_ids": 305
+        },
+        {
+          "camera_id": "C45",
+          "frames": 5999,
+          "fps": 9.998333333333333,
+          "p50_processing_ms": 50.235,
+          "p95_processing_ms": 74.64399999999999,
+          "unique_track_ids": 218
+        },
+        {
+          "camera_id": "C46",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 48.7115,
+          "p95_processing_ms": 73.83775000000001,
+          "unique_track_ids": 191
+        },
+        {
+          "camera_id": "C47",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 49.7605,
+          "p95_processing_ms": 74.01585,
+          "unique_track_ids": 383
+        },
+        {
+          "camera_id": "C48",
+          "frames": 5999,
+          "fps": 9.998333333333333,
+          "p50_processing_ms": 49.876,
+          "p95_processing_ms": 74.79339999999998,
+          "unique_track_ids": 430
+        },
+        {
+          "camera_id": "C49",
+          "frames": 5999,
+          "fps": 9.998333333333333,
+          "p50_processing_ms": 49.049,
+          "p95_processing_ms": 74.05479999999999,
+          "unique_track_ids": 281
+        },
+        {
+          "camera_id": "C50",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 50.042500000000004,
+          "p95_processing_ms": 74.38475000000001,
+          "unique_track_ids": 310
+        }
+      ]
+    },
+    {
+      "label": "CPU person-detection-0202 INT8",
+      "backend": "openvino",
+      "tracker": "bytetrack",
+      "precision": "int8",
+      "source_count": 5,
+      "source_width": 1920,
+      "source_height": 1080,
+      "encoded_fps": 10,
+      "analysis_target_fps": 10,
+      "seconds": 600.0,
+      "minimum_fps": 9.998333333333333,
+      "total_fps": 49.99666666666667,
+      "p95_processing_ms": 59.40785055208835,
+      "model_sha256": "9216c8f5e8e035008b71be94896da4c5ea995d0b87d02b16200512228ac07c34",
+      "engine_sha256": null,
+      "resources": {
+        "cpu_percent": {
+          "mean": 44.43787085514835,
+          "max": 50.6,
+          "min": 41.4
+        },
+        "ram_used_mib": {
+          "mean": 8126.00329270288,
+          "max": 8177.6953125,
+          "min": 8090.34375
+        },
+        "ram_available_mib": {
+          "mean": 15833.477176047121,
+          "max": 15869.13671875,
+          "min": 15781.78515625
+        },
+        "gpu_percent": {
+          "mean": 0.0017452006980802793,
+          "max": 1.0,
+          "min": 0.0
+        },
+        "decoder_percent": {
+          "mean": 0.0,
+          "max": 0.0,
+          "min": 0.0
+        },
+        "encoder_percent": {
+          "mean": 0.0,
+          "max": 0.0,
+          "min": 0.0
+        },
+        "vram_mib": {
+          "mean": 68.0,
+          "max": 68.0,
+          "min": 68.0
+        },
+        "temperature_c": {
+          "mean": 42.32984293193717,
+          "max": 43.0,
+          "min": 41.0
+        },
+        "power_w": {
+          "mean": 28.0025479930192,
+          "max": 34.72,
+          "min": 26.26
+        }
+      },
+      "metadata_dropped": 0,
+      "error": null,
+      "per_camera": [
+        {
+          "camera_id": "C01",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 46.00855599892384,
+          "p95_processing_ms": 59.00996349810157,
+          "unique_track_ids": 1090
+        },
+        {
+          "camera_id": "C02",
+          "frames": 5999,
+          "fps": 9.998333333333333,
+          "p50_processing_ms": 50.981141001102515,
+          "p95_processing_ms": 61.40654609844204,
+          "unique_track_ids": 1058
+        },
+        {
+          "camera_id": "C03",
+          "frames": 5999,
+          "fps": 9.998333333333333,
+          "p50_processing_ms": 50.292975996853784,
+          "p95_processing_ms": 59.72361989988712,
+          "unique_track_ids": 709
+        },
+        {
+          "camera_id": "C04",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 42.51681200003077,
+          "p95_processing_ms": 59.70047779956076,
+          "unique_track_ids": 779
+        },
+        {
+          "camera_id": "C05",
+          "frames": 6000,
+          "fps": 10.0,
+          "p50_processing_ms": 35.337741997864214,
+          "p95_processing_ms": 47.25761315003184,
+          "unique_track_ids": 319
+        }
+      ]
+    }
+  ],
+  "gpu_100_boundary": {
+    "count": 100,
+    "workers": 2,
+    "shared_window_seconds": 600,
+    "minimum_fps": 9.835,
+    "total_fps": 992.885,
+    "p95_processing_ms": 187.05849999999998,
+    "frame_age_p95_ms": 326.762253,
+    "round2_pass": false
+  },
+  "gpu_quality": {
+    "frames": 100,
+    "reference_detections": 1216,
+    "candidate_detections": 1181,
+    "matched": 1168,
+    "precision_against_reference": 0.9889923793395428,
+    "recall_against_reference": 0.9605263157894737,
+    "note": "Agreement with the FP32 model at confidence 0.25 and IoU 0.5, not labeled real-world accuracy.",
+    "agreement_gate_pass": true,
+    "candidate_threshold": 0.25
+  },
+  "cpu_quality": {
+    "model": "models/retail/person-detection-0202.xml",
+    "frames": 60,
+    "threads": 4,
+    "reference_count": 738,
+    "median_model_ms": 21.71551849824027,
+    "agreement": {
+      "0.15": {
+        "detections": 923,
+        "matched": 664,
+        "precision": 0.7193932827735645,
+        "recall": 0.8997289972899729
+      },
+      "0.25": {
+        "detections": 839,
+        "matched": 652,
+        "precision": 0.7771156138259833,
+        "recall": 0.8834688346883469
+      },
+      "0.5": {
+        "detections": 716,
+        "matched": 608,
+        "precision": 0.8491620111731844,
+        "recall": 0.8238482384823849
+      }
+    }
+  },
+  "note": "Synthetic RTSP replay. Agreement with FP32 is not labeled field accuracy; no full CAMEX or HA claim."
+}

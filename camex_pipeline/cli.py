@@ -61,7 +61,7 @@ def arguments():
         p.error('Invalid thresholds or CPU parallelism')
     a.model=a.model.resolve()
     if not a.model.is_file():
-        p.error('The original model ONNX is required for provenance')
+        p.error('The model file is missing; supply an ONNX or OpenVINO XML with --model')
     if a.backend=='openvino' and a.precision=='fp16':
         p.error('CPU supports the FP32 baseline or a separately evaluated INT8 model')
     if a.backend=='deepstream' and a.analysis_size!=640:
@@ -70,6 +70,8 @@ def arguments():
         p.error('The SSD CPU profile requires OpenVINO with cpu-batch 1')
     if not 1000<=a.mux_timeout_us<=100000 or not 0<=a.decode_surfaces<=16:
         p.error('Invalid GPU buffering parameters')
+    if not 1<=a.startup_timeout<=600 or not 1<=a.reconnect_seconds<=300 or a.vram_reserve_mib<0:
+        p.error('Invalid startup/reconnect timeout or GPU memory reserve')
     return a
 
 def run_gpu(a,sources,folder,run_id,monitor):

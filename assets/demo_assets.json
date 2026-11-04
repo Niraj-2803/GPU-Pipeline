@@ -1,0 +1,19 @@
+{
+  "release": "pipeline-reference-20261105",
+  "profiles": {
+    "mini": {
+      "file": "camex-demo-mini5.tar.gz",
+      "bytes": 231093130,
+      "sha256": "ef932e83de238297e27b17ba0091520322dda90cc33ab4b847016be8dee643a2",
+      "url": "https://github.com/Niraj-2803/GPU-Pipeline/releases/download/pipeline-reference-20261105/camex-demo-mini5.tar.gz",
+      "views": 5
+    },
+    "full": {
+      "file": "camex-demo-full50.tar.gz",
+      "bytes": 1480317930,
+      "sha256": "a644bd1e15d2a9bf7d3440bc7a252197239cb1c4c10aa86c31d68140059d2c29",
+      "url": "https://github.com/Niraj-2803/GPU-Pipeline/releases/download/pipeline-reference-20261105/camex-demo-full50.tar.gz",
+      "views": 50
+    }
+  }
+}

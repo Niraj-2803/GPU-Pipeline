@@ -1,272 +1,316 @@
-# CAMEX Portable Detection and Tracking Reference
+# CAMEX CPU and GPU Detection and Tracking Reference
 
-This local optimization review adds opt-in profiles described in
-[optimization review notes](docs/OPTIMIZATION_REVIEW.md). The baseline setup
-below remains available. The faster CPU SSD model is not an accuracy-equivalent
-replacement for YOLOv8s and has not been approved for integration.
+Two video-processing backends share the **same source configuration and per-frame JSON output**:
 
-Two implementations share source configuration, commands and JSON metadata:
+| Backend | Decode | Person detector | Tracker |
+|---|---|---|---|
+| GPU | NVIDIA hardware decode | YOLOv8s TensorRT, INT8 backbone and FP16 head | NvDCF |
+| CPU | FFmpeg/PyAV software decode | OpenVINO; optional `person-detection-0202` INT8 | ByteTrack |
 
-- **DeepStream:** NVIDIA hardware decoding, TensorRT YOLOv8s, NvDCF tracking.
-- **CPU:** PyAV/FFmpeg software decoding, OpenVINO CPU YOLOv8s, ByteTrack tracking.
+Verified local profiles: **50 Full HD inputs at 10 FPS on an RTX 3080**, and **five Full HD inputs at 10 FPS on a Ryzen 7 2700 using the CPU-specific detector**. These are synthetic RTSP replay measurements, not a complete CAMEX product capacity guarantee. The fast CPU detector is a **different model**, not an accuracy-equivalent version of YOLOv8s. The unchanged YOLO CPU path remains available.
 
-Branch roles: `GPU-Pipeline-Development` is the GPU reference;
-`CPU-Pipeline_Development` adds the CPU implementation. Select the CPU branch
-before using `--backend openvino`. The supplied local review versions have not
-yet been published to those shared branches.
+The 100-input GPU stress case missed the selected latency limit; ten CPU inputs missed the FPS target. Do not quote either as a qualified configuration. Read [results and limitations](docs/RESULTS.md) before sizing a deployment.
 
-This is a reference for integration, not the complete CAMEX product. It does
-not perform Face ID, cross-camera identification, queue analytics or alerts.
-Track IDs belong to one camera and one run. Different trackers and precision
-modes can produce different boxes and IDs despite the same output schema.
+## Start here
 
-The original `run.sh` and `scripts/` remain as the legacy prepared-Dell
-benchmark. **Use `run_pipeline.sh` for this portable reference.** The original
-TensorRT engines in this repository must not be assumed compatible with another
-GPU or TensorRT version.
+1. [Install the common tools](#1-get-the-code-and-install-the-common-tools).
+2. [Get the exact demo data](#2-get-the-demo-data).
+3. Choose [CPU setup](#3-cpu-openvino) or [GPU setup](#4-gpu-deepstream-and-tensorrt).
+4. Use [real cameras](#5-connect-real-rtsp-cameras) or [looped RTSP replay](#6-run-the-verified-rtsp-replay-profiles).
+5. [Inspect results](#7-results-and-verification), then read [CAMEX integration](docs/INTEGRATION.md).
 
-## 1. Host prerequisites
+[GPU video](https://github.com/Niraj-2803/GPU-Pipeline/releases/download/pipeline-reference-20261105/gpu50_video.mp4) · [CPU video](https://github.com/Niraj-2803/GPU-Pipeline/releases/download/pipeline-reference-20261105/cpu5_video.mp4) · [Release assets](https://github.com/Niraj-2803/GPU-Pipeline/releases/tag/pipeline-reference-20261105)
 
-The verified host is Ubuntu 22.04 x86-64. See the delivered comparison report
-for exact hardware, versions, measured results and limitations.
-The local evidence summary is in [validation notes](docs/VALIDATION.md).
+## 1. Get the code and install the common tools
+
+Verified platform: Ubuntu 22.04 x86-64, Python 3.10. Use a virtual environment, not the system Python packages.
 
 ```bash
 sudo apt-get update
-sudo apt-get install -y git python3-venv python3-pip ffmpeg libgl1 libglib2.0-0
-git clone https://github.com/Niraj-2803/GPU-Pipeline.git
+sudo apt-get install -y git python3-venv python3-pip ffmpeg libgl1 libglib2.0-0 curl
+git clone --branch codex/cpu-pipeline-delivery-20261105 https://github.com/Niraj-2803/GPU-Pipeline.git
 cd GPU-Pipeline
-# Select the reviewed GPU or CPU branch/review commit supplied with the release.
 python3 -m venv .venv
-.venv/bin/pip install -r requirements-cpu.txt
+.venv/bin/python -m pip install -r requirements-cpu.txt
 export CAMEX_PYTHON="$PWD/.venv/bin/python"
 ```
 
-The CPU installation does not require Docker, CUDA or an NVIDIA GPU.
-`supervision==0.27.0` is deliberately pinned because its ByteTrack API differs
-from newer releases. The CPU backend explicitly compiles for `CPU`, not AUTO.
-Do not replace these pins without rerunning the tests and agreement checks.
+Both delivery branches contain the common implementation and accept explicit `--backend` selection. The CPU branch defaults to OpenVINO; the GPU branch defaults to DeepStream. Examples specify the backend to remove ambiguity.
 
-For GPU execution, install the Ubuntu-compatible NVIDIA driver, Docker Engine
-and the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
-On an existing production machine, coordinate driver changes, reboots and
-Docker restarts with its owner; none are part of the runner.
+Review branches: `codex/cpu-pipeline-delivery-20261105` and `codex/gpu-pipeline-delivery-20261105`. Their PR targets are the existing `CPU-Pipeline_Development` and `GPU-Pipeline-Development` branches. Until merged, cloning an old development branch will **not** get this update.
 
-For a clean Ubuntu host, Docker can be installed with `sudo apt-get install
-docker.io`. Add your account with `sudo usermod -aG docker "$USER"`, then log out
-and back in. After installing the NVIDIA toolkit from the linked official
-instructions, configure it with `sudo nvidia-ctk runtime configure --runtime=docker`
-and restart Docker with `sudo systemctl restart docker` during the approved
-maintenance window. These administrator steps are not required again for each run.
+Use **`run_pipeline.sh`**. The original `run.sh`, `scripts/`, old engines and historical results are retained only as legacy prepared-Dell experiments. They are not the portable entrypoint.
 
-Verify GPU access before proceeding:
+## 2. Get the demo data
+
+Checksum-verified release archives contain synthetic airport clips, their source configuration, the exact person-output ONNX used by the benchmark, and model-source/license notices. No staff photos or private camera credentials are included.
 
 ```bash
-nvidia-smi --query-gpu=index,name,pci.bus_id,memory.total --format=csv
+# Five distinct 60-second FHD/H.265/10-FPS clips for the CPU example.
+.venv/bin/python tools/fetch_demo.py --profile mini
+
+# Fifty distinct clips for the published GPU workload.
+.venv/bin/python tools/fetch_demo.py --profile full
+```
+
+These print `data/mini/sources.json` and `data/full/sources.json`. `assets/demo_assets.json` records URLs, sizes and SHA-256 hashes; extracted files are also verified. For an offline archive downloaded from the release page:
+
+```bash
+.venv/bin/python tools/fetch_demo.py --profile full --archive /path/to/camex-demo-full50.tar.gz
+```
+
+`-n` above the source count repeats inputs under distinct suffixed IDs. This is a load test, not evidence of that many distinct physical cameras. Use the full archive, not five repeated clips, when reproducing the recorded 50-view workload.
+
+## 3. CPU OpenVINO
+
+CPU inference needs no NVIDIA GPU, CUDA or Docker. Docker is needed only for the optional local RTSP replay helper.
+
+```bash
+.venv/bin/python tools/fetch_cpu_model.py --output-dir models/cpu-person
+```
+
+The helper downloads the official Open Model Zoo model and verifies both XML and BIN against published SHA-384 values. Keep both files together. The SSD adapter applies its required **raw BGR, 512x512 resize**, without division by 255.
+
+Run a short file smoke test:
+
+```bash
+RUN="runs/cpu-file-$(date +%Y%m%dT%H%M%S)"
+./run_pipeline.sh --backend openvino \
+  --sources data/mini/sources.json -n 5 -res FHD --source-fps 10 --analysis-fps 10 \
+  --model models/cpu-person/person-detection-0202.xml --precision int8 \
+  --detector ssd --ssd-class-id 0 --threshold 0.5 \
+  --threads 8 --cpu-streams 2 --requests 4 --performance-hint THROUGHPUT \
+  -track yes -out no --warmup 8 --seconds 30 --run-dir "$RUN"
+.venv/bin/python tools/check_result.py "$RUN" --seconds 30 --metadata
+```
+
+To test the original YOLOv8s on CPU instead:
+
+```bash
+./run_pipeline.sh --backend openvino --sources data/mini/sources.json -n 1 \
+  --model data/mini/models/yolov8s-person.onnx --precision fp32 --detector yolo \
+  --analysis-size 640 --threshold 0.25 --threads 8 --requests 2 \
+  --warmup 8 --seconds 30 -out no
+```
+
+That unchanged model did not meet the five-camera target on our Ryzen host. Do not substitute models without rechecking quality. See [model preparation](docs/MODELS.md).
+
+## 4. GPU DeepStream and TensorRT
+
+### Host prerequisites
+
+The host needs a compatible NVIDIA driver, Docker Engine and NVIDIA Container Toolkit. Verify the driver first:
+
+```bash
+nvidia-smi --query-gpu=index,name,pci.bus_id,memory.total,driver_version --format=csv
+```
+
+If it fails, ask the administrator to install the appropriate driver and reboot during a maintenance window. This project does not change host drivers.
+
+On a clean Ubuntu host:
+
+```bash
+sudo apt-get install -y docker.io
+sudo usermod -aG docker "$USER"
+```
+
+Log out and back in. Docker-group membership grants elevated host access. Install NVIDIA Container Toolkit using the [official instructions](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html), then configure Docker during an approved maintenance window:
+
+```bash
+sudo nvidia-ctk runtime configure --runtime=docker
+sudo systemctl restart docker
 docker run --rm --gpus all nvidia/cuda:12.2.0-base-ubuntu22.04 nvidia-smi
+```
+
+Do not restart Docker casually on a shared server.
+
+### Build the runtime image
+
+```bash
 docker build -f Dockerfile.deepstream -t camex-cmp-deepstream:7.0-review .
 ```
 
-The image pins DeepStream 7.0/TensorRT 8.6 through a digest. GPU compatibility
-must be checked for each deployment. `--gpu-id` selects the **nvidia-smi index**.
-The runner maps this to CUDA's PCI order and sets the same device throughout
-decode, inference, tracking and encoding. This matters on mixed-GPU hosts.
+The image pins DeepStream 7.0/TensorRT 8.6 by digest. It is not a universal runtime for every GPU generation. Check compatibility before using another card. `--gpu-id` selects the **nvidia-smi index**; the runner maps CUDA PCI order explicitly on mixed-GPU hosts.
 
-## 2. Model preparation
+### Prepare calibration and build the INT8 engine
 
-Use the **review model bundle**, containing `yolov8s-person.onnx`, for exact
-reproduction of the delivered results. Its SHA-256 is:
+```bash
+.venv/bin/python tools/prepare_calibration.py \
+  --sources data/full/sources.json --views 50 --output-dir data/calibration
 
-```text
-75b32bc520027b73d9b44acbb167ea5f78bf9750f5415e4f0985291cea73f7de
+# Set this from nvidia-smi. It was 1 on our mixed-GPU test host.
+GPU=0
+.venv/bin/python tools/build_engine.py \
+  --model data/full/models/yolov8s-person.onnx \
+  --precision int8 --calibration-dir data/calibration \
+  --output-dir models/local-int8 --gpu-id "$GPU"
 ```
 
-Place it at `models/yolov8s-person.onnx`, or supply its actual path with
-`--model`. The model expects RGB NCHW float32 values divided by 255, with a
-640x640 centered, zero-padded letterbox. Its output is `[batch,8400,6]`:
-`x1,y1,x2,y2,person_score,max_class_score`. This is **not** an arbitrary stock
-YOLO ONNX layout. A mismatched export can run but produce invalid detections.
+The result is `models/local-int8/yolov8s-int8-head-b16.engine`. The recipe uses an INT8 backbone, FP16 detection head, MinMax calibration, and a 1/8/16 batch profile. Here “head” means final network layers, not a head-only object detector. Calibration uses 500 frames at 0,4,...,36 seconds across 50 views.
 
-For an independent export, follow [model export instructions](docs/MODELS.md).
-New exports and INT8 conversions require a new agreement report; do not attach
-the old benchmark figures to different model files. Confirm the model's
-commercial license separately from this reference code.
+Build on the target GPU with this runtime. Never rename/copy an old RTX 5000 or Jetson engine and assume compatibility. Keep the generated log and provenance JSON. Calibration and tactic selection can take several minutes; build time is not inference time.
 
-Build the GPU engine on the target GPU:
+Optional FP16 baseline, in a separate output directory:
 
 ```bash
 .venv/bin/python tools/build_engine.py \
-  --model models/yolov8s-person.onnx \
-  --output-dir models/local-gpu --precision fp16 --gpu-id 0
+  --model data/full/models/yolov8s-person.onnx --precision fp16 \
+  --opt-batch 8 --output-dir models/local-fp16 --gpu-id "$GPU"
 ```
 
-Use `--precision fp32` and a separate output directory for a FP32 engine.
-The builder does not overwrite an existing engine. Retain its log, provenance
-JSON and model/engine hashes. Engine build time is not inference time.
+## 5. Connect real RTSP cameras
 
-## 3. Configure files or RTSP cameras
-
-Copy `examples/sources.json` to `local.sources.json`. Supply real paths and
-the **actual encoded** width, height and FPS for each source. Relative paths
-are relative to the configuration file. Files are probed before the run.
+Create an untracked `local.rtsp.json` with the actual camera settings:
 
 ```json
-{"schema_version":"1.0","sources":[
-  {"camera_id":"entrance","uri":"/data/C01.mp4","width":1920,"height":1080,"fps":10},
-  {"camera_id":"lobby","uri":"/data/C02.mp4","width":1920,"height":1080,"fps":10}
-]}
+{
+  "schema_version": "1.0",
+  "sources": [
+    {"camera_id":"entrance","uri":"rtsp://USER:PASSWORD@CAMERA_IP/STREAM_PATH","width":1920,"height":1080,"fps":10},
+    {"camera_id":"lobby","uri":"rtsp://USER:PASSWORD@SECOND_CAMERA/STREAM_PATH","width":1920,"height":1080,"fps":10}
+  ]
+}
 ```
-
-For real cameras, use `rtsp://user:password@camera-address/path` instead of the
-file path. Get the stream path and credentials from the camera administrator;
-vendor paths vary. Use TCP, confirm connectivity from this host with FFprobe
-and select a camera-side 10-FPS analytics stream where possible.
-
-Keep credentials in an untracked file such as `local.rtsp.json`, with mode
-`600`. Never commit it. The saved settings redact RTSP user info and query
-parameters, but native failure logs can contain URLs and must remain private.
-
-`-n` selects the number of independent inputs. If it exceeds the configured
-sources, the runner repeats them under distinct IDs such as `C01_r2`. This is
-explicit load testing, not evidence of that many distinct physical cameras.
-
-`-res FHD` validates 1920x1080. `-res 2K` validates 2560x1440. Neither option
-resizes a source or changes its encoded FPS. Record any upscaling in the source
-configuration with `"is_upscaled": true`.
-
-## 4. Run the same workflow on each backend
-
-GPU example:
 
 ```bash
-./run_pipeline.sh --backend deepstream --sources local.sources.json \
-  -n 5 -res FHD --source-fps 10 --analysis-fps 10 \
-  --model models/yolov8s-person.onnx \
-  --engine models/local-gpu/yolov8s-fp16-b16.engine --precision fp16 \
-  --gpu-id 0 --batch 4 -track yes -out no --warmup 8 --seconds 30
+chmod 600 local.rtsp.json
 ```
 
-CPU example:
+Use administrator-provided URLs; vendor paths vary. URL-encode special characters in credentials. Check reachability and decode with FFprobe from this Ubuntu host. Never commit credentials or paste private logs into public issues.
+
+Point either backend's `--sources` to this file. IDs must be unique and use letters, digits, `_` or `-`. Relative video paths resolve relative to the configuration file. GPU inputs must share one resolution and encoded FPS per run: FHD or 2560x1440, at 10 or 30 FPS. Use separate workers for different GPU source profiles. H.264/H.265 RTSP are handled by the decode stack; qualification used H.265.
+
+`--analysis-fps 10` does not reconfigure a camera. A 30-FPS camera has a different decode workload. `-res` and `--source-fps` validate settings; they do not resize/re-encode input.
+
+## 6. Run the verified RTSP replay profiles
+
+The helper copies compressed files into independent localhost-only RTSP publishers, waits for actual decoded frames, and loops the clips. It does not render Unity scenes or simulate WAN conditions. Docker is required for this helper, even with CPU inference.
+
+### CPU profile: five feeds
+
+Terminal A, from the repository root:
 
 ```bash
-./run_pipeline.sh --backend openvino --sources local.sources.json \
-  -n 1 -res FHD --source-fps 10 --analysis-fps 10 \
-  --model models/yolov8s-person.onnx --precision fp32 \
-  --threads 8 --requests 2 -track yes -out no --warmup 8 --seconds 30
+.venv/bin/python tools/replay_rtsp.py --sources data/mini/sources.json \
+  -n 5 --port 29554 --seconds 1800 --output local-replay-cpu
 ```
 
-Start with one source, then increase gradually. CPU-only support does not
-promise GPU-level throughput. Use `-track no` to isolate detection. Use
-`-out yes --mosaic-fps 5` to record an annotated MP4; `--mosaic-fps 10` requests
-a 10-FPS preview. Recording adds CPU/GPU work and is a separate test mode.
-
-CPU tuning controls are `--threads`, `--requests`, `--cpu-streams 1|2|4` and
-`--hyperthreads`. Start from the tested defaults. More threads or streams are
-not necessarily faster; keep each tuning run and its effective OpenVINO config.
-An explicitly lower `--analysis-fps 5` profile is a different workload and must
-not be reported as achieving a 10-FPS target.
-
-The terminal reports progress every second and prints a unique results folder.
-Check `summary.json`, not just a preview's nominal FPS. `throughput_check`
-requires every camera to reach 95% of the requested analysis rate with no
-reported run, schema or metadata-drop error. Latency remains a separate metric.
-The displayed preview may repeat frames and is not a throughput counter.
-
-Press Ctrl+C to stop the current runner. The GPU wrapper stops only its named
-test container. It never stops the host's unrelated containers or services.
-
-## 5. RTSP replay without physical cameras
-
-Use the exact same file configuration to publish distinct local RTSP feeds:
+Wait for `RTSP READY` and leave Terminal A running. In Terminal B:
 
 ```bash
-.venv/bin/python tools/replay_rtsp.py --sources local.sources.json \
-  -n 5 --port 29554 --seconds 1800 --output local-replay
+cd /path/to/GPU-Pipeline
+export CAMEX_PYTHON="$PWD/.venv/bin/python"
+RUN="runs/cpu-rtsp-$(date +%Y%m%dT%H%M%S)"
+./run_pipeline.sh --backend openvino --sources local-replay-cpu/sources.json \
+  -n 5 --analysis-fps 10 --model models/cpu-person/person-detection-0202.xml \
+  --precision int8 --detector ssd --ssd-class-id 0 --threshold 0.5 \
+  --threads 8 --cpu-streams 2 --requests 4 --performance-hint THROUGHPUT \
+  --warmup 15 --seconds 600 -out no --run-dir "$RUN"
+.venv/bin/python tools/check_result.py "$RUN" --seconds 600 --metadata
 ```
 
-After `RTSP READY`, run either backend with `--sources local-replay/sources.json`.
-This uses CPU-light stream copying, not re-encoding. The relay binds only to
-127.0.0.1. Close the replay command with Ctrl+C when done; it stops its publishers
-and its named relay container. Use a different unused port for another replay.
-Direct file tests on both backends require sufficiently long files; use this looping
-RTSP replay for a ten-minute confirmation rather than silently resetting PTS.
+### GPU profile: 50 feeds
 
-## 6. Optional CPU INT8 optimization
-
-Keep the FP32 baseline. Quantization is a separate quality/performance trade-off:
+Stop any previous replay with Ctrl+C before reusing its port. Terminal A:
 
 ```bash
-.venv/bin/pip install -r requirements-optimization.txt
-.venv/bin/python tools/quantize_cpu.py --model models/yolov8s-person.onnx \
-  --sources local.sources.json --views 20 --output models/cpu-int8/person.xml
-.venv/bin/python tools/evaluate_agreement.py --reference models/yolov8s-person.onnx \
-  --candidate models/cpu-int8/person.xml --sources local.sources.json \
-  --views 20 --output quality/cpu-int8
+.venv/bin/python tools/replay_rtsp.py --sources data/full/sources.json \
+  -n 50 --port 29554 --seconds 1800 --output local-replay-gpu
 ```
 
-The default retains a floating-point detection head. `--quantize-head` tests a
-separate variant including supported head operations. Calibration uses sampled
-frames at 0,10,20,40,50 seconds. Evaluation uses 5,25,45 seconds. Source clips must
-be at least 51 seconds long. Agreement with FP32 is **not labeled accuracy**.
-The example gate is 95% precision and recall relative to the FP32 detections.
-Use a separate real-world labeled test before deployment.
-
-After evaluating, use `--backend openvino --model models/cpu-int8/person.xml
---precision int8`. The metadata format stays the same.
-
-## 7. Integrate into CAMEX
-
-Read [the metadata contract](docs/CONTRACT.md). Each run writes `metadata.jsonl`:
+Wait for `RTSP READY`. Terminal B:
 
 ```bash
-.venv/bin/python examples/consume_metadata.py runs/RUN_FOLDER/metadata.jsonl --follow
+cd /path/to/GPU-Pipeline
+export CAMEX_PYTHON="$PWD/.venv/bin/python"
+GPU=0
+RUN="runs/gpu-rtsp-$(date +%Y%m%dT%H%M%S)"
+./run_pipeline.sh --backend deepstream --sources local-replay-gpu/sources.json \
+  -n 50 --analysis-fps 10 --model data/full/models/yolov8s-person.onnx \
+  --engine models/local-int8/yolov8s-int8-head-b16.engine --precision int8 \
+  --gpu-id "$GPU" --batch 8 --mux-size native --mux-timeout-us 40000 \
+  --decode-surfaces 2 --startup-timeout 120 --reconnect-seconds 30 \
+  --warmup 15 --seconds 600 -track yes -out no --run-dir "$RUN"
+.venv/bin/python tools/check_result.py "$RUN" --seconds 600 \
+  --max-frame-age-ms 300 --metadata
 ```
 
-Replace `on_frame` in that example with the existing projection/counting/event
-consumer. Use native-frame coordinates and the matching calibration version.
-Use `(run_id,camera_id,tracking_epoch,track_id)` as a tracking key. The IDs are not global IDs.
-Keep heavy database, network and additional-model calls outside the tracking
-callback. Metadata queues are bounded and report drops instead of blocking AI.
+Start with fewer feeds on untested hardware. Fifty is a verified profile on the stated host, not a universal maximum. Run one timed workload at a time and record other activity on the host.
 
-## 8. Tests and repeatable benchmarks
+### Record or stop
+
+For an annotated preview, replace `-out no` with `-out yes --mosaic-fps 10`, use `--seconds 45` and a new run directory. Open `mosaic.mp4` after completion. Recording adds tiling, overlay and encoding costs and needs its own result check. A preview's playback FPS is not proof of inference FPS. An unfinished `mosaic.partial.mp4` is not valid evidence.
+
+Ctrl+C stops the inference run. Stop Terminal A separately to stop its publishers and named relay. The tools leave unrelated services, firewall settings and containers alone.
+
+## 7. Results and verification
+
+Each run creates a unique folder:
+
+| File | Contents |
+|---|---|
+| `settings.json` | Requested settings, redacted sources, runtime/source hashes |
+| `metadata.jsonl` | One event per processed frame, including empty detections |
+| `summary.json` | Actual FPS, P50/P95, errors, resources and native result |
+| `per_camera.csv` | Camera-level counts, FPS and track counts |
+| `per_second.jsonl` | Interval rates revealing stalls or bursts |
+| `resources.jsonl` | CPU/RAM and selected-GPU utilization/memory |
+| `native.log` | GPU diagnostics; may contain private camera URLs |
+| `mosaic.mp4` | Optional finalized annotated video |
+
+A zero exit code means normal completion, **not necessarily a passed FPS target**. The legacy `summary.throughput_check` uses 95% of target. The explicit release check above uses a stricter 9.8-FPS minimum at a 10-FPS target, 300-ms processing P95, completed duration and no runtime/schema/output-drop error. The GPU command also checks pipeline frame-age P95. Neither timing is physical exposure-to-alert latency.
+
+Review [measurement definitions](docs/MEASUREMENTS.md) and [the results](docs/RESULTS.md). Report the slowest camera, not just aggregate FPS. Track IDs/counts are not cross-camera identity or tracking-accuracy scores.
+
+## 8. Integrate with CAMEX
+
+Read [the integration guide](docs/INTEGRATION.md) and [metadata contract](docs/CONTRACT.md). Both backends write the same schema, so projection/counting/persistence need no backend-specific parser.
+
+```bash
+.venv/bin/python examples/consume_metadata.py "$RUN/metadata.jsonl" --follow
+.venv/bin/python examples/camex_adapter.py "$RUN/metadata.jsonl" --follow
+```
+
+The adapter emits native-pixel boxes, bottom-center footpoints and camera-scoped tracking keys. Replace its output with the existing CAMEX projection/event callback. It does not invent calibration or implement the full analytics product. Heavy database/network/model calls belong in the separate consumer, not the inference callback.
+
+## 9. Settings and tests
+
+| Setting | Meaning |
+|---|---|
+| `--analysis-fps` | Analysis target, not camera configuration |
+| `--threshold`, `--nms` | Confidence and YOLO NMS; model-specific |
+| `--batch` | GPU inference batch; stay inside the engine profile |
+| `--mux-size`, `--mux-timeout-us` | GPU intermediate size and batch timing |
+| `--decode-surfaces` | Extra decode buffers; less memory can reduce stability |
+| `--startup-timeout`, `--reconnect-seconds` | GPU startup/reconnect timing |
+| `--threads`, `--cpu-streams`, `--requests` | CPU scheduling/concurrency |
+| `--performance-hint`, `--cpu-batch` | CPU latency/throughput mode and YOLO batching |
+| `--detector ssd` | Explicit CPU SSD adapter; CPU batch must be 1 |
+| `--analysis-size` | YOLO input size; requires a matching export |
+| `--vram-reserve-mib` | Free-memory reserve guard for GPU runs |
+
+Do not silently change detector, confidence, resolution or analysis rate and call it the same benchmark.
 
 ```bash
 .venv/bin/python -m pytest -q tests
-.venv/bin/python tools/benchmark.py --backend openvino \
-  --sources local.sources.json --model models/yolov8s-person.onnx \
-  --precision fp32 --counts 1,2,5 --repeat 3 --output benchmark/cpu
 ```
 
-For GPU, use `--backend deepstream`, its engine path, precision and GPU index.
-Measure one run at a time. Keep the same sources, model, thresholds and rate.
-Record tracker/precision differences and any background workload. Report all
-failures, not only the fastest run. See [measurement definitions](docs/MEASUREMENTS.md).
+The full suite requires the CPU requirements even on a GPU host. Optional CPU quantization and independent model export are in [model preparation](docs/MODELS.md); they are not needed with the release model files.
 
-## Troubleshooting
+## 10. Troubleshooting and boundaries
 
-- **Missing videos:** MP4 files are intentionally not in Git. Supply the review
-  dataset separately or use your authorized files/RTSP cameras.
-- **Missing Docker image:** run the Docker build command above. The portable
-  runner does not depend on `camex-bench-base:20261015` or an old named container.
-- **Engine incompatibility:** rebuild on the actual GPU/runtime. Do not rename
-  an engine made for another GPU.
-- **Mixed-GPU startup stall:** check the nvidia-smi index, PCI mapping and the
-  selected device in the engine build log. Do not assume CUDA index order.
-- **Out of GPU memory:** reduce simultaneous inputs/batch and inspect other GPU
-  workloads. Do not kill another team's processes automatically.
-- **Low FPS:** distinguish decoder, model, tracker and encoder load. Lowering
-  analysis FPS does not necessarily lower the camera's encoded/decode FPS.
-- **RTSP reconnection:** the GPU source requests periodic reconnects; CPU uses
-  bounded read timeouts and retries. Validate behavior on the actual camera.
-- **Many RTSP sources fail during startup:** the replay tool waits for an actual
-  decoded frame from every publisher before printing `RTSP READY`. The GPU
-  adapter assigns distinct source IDs and allows 15 seconds of inactivity
-  before reconnecting, avoiding a reconnect loop during multi-source startup.
-- **Recording does not finalize:** the live GPU output branch receives its own
-  EOS after the measurement window. Only a finalized `mosaic.mp4` is review
-  evidence; a `mosaic.partial.mp4` from a failed run is not.
-- **No results at all:** check `native.log` for GPU errors, source reachability,
-  decoded frame dimensions, and whether any camera missed startup.
+- **Old code/commands:** choose a delivery branch and `run_pipeline.sh`, not the legacy Dell runner.
+- **Missing input/model:** run the download helpers and inspect the verified configuration paths.
+- **Docker permission denied:** complete the group/login step; do not weaken file permissions.
+- **No NVIDIA runtime:** fix driver/Container Toolkit before engine building.
+- **Engine mismatch:** rebuild on the actual GPU/runtime; do not rename an old engine.
+- **RTSP not ready:** verify URL, credentials, TCP access, codec and keyframes. Keep private logs private. The replay helper retries transient startup errors.
+- **Slow startup:** all GPU sources must produce fresh output before warmup. Do not hide missing cameras by reducing the expected count.
+- **Memory or latency limit:** reduce inputs, inspect other workloads and compare buffering. Never kill another team's processes automatically.
+- **CPU limit:** more threads do not guarantee more FPS. Measure the intended model on the actual CPU.
 
-Original experiment notes remain in `delivery/README.txt`. They describe the
-older Dell test only, not this machine or the complete production pipeline.
+Scope is person detection and camera-local tracking, not Face ID, cross-camera identity, full CAMEX analytics, production recording, high availability or an SLA. Synthetic tests do not prove field accuracy or multi-year reliability.
+
+## Licensing
+
+Third-party code, runtimes and weights retain their licenses. The YOLO reference derives from Ultralytics YOLOv8: read the included source notice and [licensing guidance](https://www.ultralytics.com/license) before proprietary/commercial integration. OpenVINO/Open Model Zoo and NVIDIA runtime terms also apply. This reference is not a grant of closed-source deployment rights.

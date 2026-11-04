@@ -31,6 +31,9 @@ The file is newline-delimited UTF-8 JSON. Each line is self-contained.
 - File `timestamp_domain: media` means relative media PTS. GPU RTSP uses pipeline
   running PTS; CPU RTSP uses stream-relative PTS. They are **not UTC exposure
   timestamps** and cannot establish physical-camera end-to-end latency.
+  JavaScript consumers needing exact long-running nanosecond values should
+  use a lossless integer parser or convert timestamps on the server; ordinary
+  JSON numbers can exceed JavaScript's safe-integer range.
 - `processing_ms` is observed post-decode/pacing to completed metadata, including
   applicable preprocessing/queue/inference/tracking work. The summary separately
   preserves legacy GPU presentation-age measurements.

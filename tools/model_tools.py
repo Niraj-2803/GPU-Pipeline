@@ -6,7 +6,7 @@ import av
 import numpy as np
 from camex_pipeline.postprocess import letterbox_geometry
 
-def tensor_at(source, seconds, size=640):
+def frame_at(source, seconds):
     with av.open(source['uri']) as container:
         stream=container.streams.video[0]
         stream.codec_context.thread_count=1
@@ -14,11 +14,20 @@ def tensor_at(source, seconds, size=640):
         for frame in container.decode(stream):
             if float(frame.pts*frame.time_base)+.001<seconds:
                 continue
-            w,h,x,y=letterbox_geometry(frame.width,frame.height,size)
-            resized=frame.reformat(width=w,height=h,format='rgb24').to_ndarray()
-            image=np.zeros((size,size,3),np.uint8);image[y:y+h,x:x+w]=resized
-            return np.ascontiguousarray(image.transpose(2,0,1)[None],dtype=np.float32)/255.
+            return frame
     raise ValueError('No frame at requested timestamp')
+
+def tensor_at(source, seconds, size=640):
+    frame=frame_at(source,seconds)
+    w,h,x,y=letterbox_geometry(frame.width,frame.height,size)
+    resized=frame.reformat(width=w,height=h,format='rgb24').to_ndarray()
+    image=np.zeros((size,size,3),np.uint8);image[y:y+h,x:x+w]=resized
+    return np.ascontiguousarray(image.transpose(2,0,1)[None],dtype=np.float32)/255.
+
+def ssd_tensor_at(source, seconds, width, height):
+    frame=frame_at(source,seconds)
+    image=frame.reformat(width=width,height=height,format='bgr24').to_ndarray()
+    return np.ascontiguousarray(image.transpose(2,0,1)[None],dtype=np.float32)
 
 def match_boxes(reference,candidate,threshold=.5):
     matched=0; used=set()

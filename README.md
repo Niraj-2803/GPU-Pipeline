@@ -24,6 +24,9 @@ The 100-input GPU stress case missed the selected latency limit; ten CPU inputs 
 ## 1. Get the code and install the common tools
 
 Verified platform: Ubuntu 22.04 x86-64, Python 3.10. Use a virtual environment, not the system Python packages.
+Online setup needs access to PyPI, the model/download URLs, Docker Hub and
+NVIDIA's container registry. Offline machines need those wheels, archives and
+container images staged in advance.
 
 ```bash
 sudo apt-get update
@@ -36,6 +39,8 @@ export CAMEX_PYTHON="$PWD/.venv/bin/python"
 ```
 
 Both delivery branches contain the common implementation and accept explicit `--backend` selection. The CPU branch defaults to OpenVINO; the GPU branch defaults to DeepStream. Examples specify the backend to remove ambiguity.
+For a GPU-oriented checkout, replace the clone command's branch with
+`codex/gpu-pipeline-delivery-20261105`.
 
 Review branches: `codex/cpu-pipeline-delivery-20261105` and `codex/gpu-pipeline-delivery-20261105`. Their PR targets are the existing `CPU-Pipeline_Development` and `GPU-Pipeline-Development` branches. Until merged, cloning an old development branch will **not** get this update.
 
@@ -54,6 +59,9 @@ Checksum-verified release archives contain synthetic airport clips, their source
 ```
 
 These print `data/mini/sources.json` and `data/full/sources.json`. `assets/demo_assets.json` records URLs, sizes and SHA-256 hashes; extracted files are also verified. For an offline archive downloaded from the release page:
+Use only the bundle needed for your example: mini for the CPU quickstart, full
+for the 50-feed GPU test. The full bundle also works for CPU tests when its
+source path is substituted.
 
 ```bash
 .venv/bin/python tools/fetch_demo.py --profile full --archive /path/to/camex-demo-full50.tar.gz
@@ -303,6 +311,7 @@ The full suite requires the CPU requirements even on a GPU host. Optional CPU qu
 - **Missing input/model:** run the download helpers and inspect the verified configuration paths.
 - **Docker permission denied:** complete the group/login step; do not weaken file permissions.
 - **No NVIDIA runtime:** fix driver/Container Toolkit before engine building.
+- **Registry authentication or download failure:** check network access and the registry's current access requirements; do not put access tokens in this repository.
 - **Engine mismatch:** rebuild on the actual GPU/runtime; do not rename an old engine.
 - **RTSP not ready:** verify URL, credentials, TCP access, codec and keyframes. Keep private logs private. The replay helper retries transient startup errors.
 - **Slow startup:** all GPU sources must produce fresh output before warmup. Do not hide missing cameras by reducing the expected count.

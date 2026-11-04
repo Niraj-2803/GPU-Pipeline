@@ -74,10 +74,34 @@ Official specification and license references:
 This model improves CPU throughput but is not accuracy-equivalent. Keep the
 original YOLO path available and validate the selected model on client footage.
 
+Compare the CPU SSD with the reference on the same decoded images:
+
+```bash
+.venv/bin/python tools/evaluate_agreement.py \
+  --reference data/full/models/yolov8s-person.onnx \
+  --candidate models/cpu-person/person-detection-0202.xml \
+  --candidate-detector ssd --candidate-threshold 0.5 \
+  --sources data/full/sources.json --views 20 --output quality/cpu-ssd
+```
+
+Compare the rebuilt GPU engine on the held-out GPU sample times:
+
+```bash
+.venv/bin/python tools/evaluate_agreement.py \
+  --reference data/full/models/yolov8s-person.onnx \
+  --candidate models/local-int8/yolov8s-int8-head-b16.engine \
+  --sources data/full/sources.json --views 20 --times 41,45,49,53,57 \
+  --gpu-id "$GPU" --output quality/gpu-int8
+```
+
+Pass `--image` if the Docker image has a custom tag. These helpers compare
+boxes, not tracking IDs or recognition identity. They require seekable local
+videos and report the exact model hashes and thresholds used.
+
 ## Quality checks
 
 `tools/evaluate_agreement.py` compares detections against FP32 using the same
-preprocessed tensors, threshold and NMS. Calibration samples and evaluation
+source frames and the appropriate model preprocessing. Calibration samples and evaluation
 timestamps are separate. This detects regressions but does not establish real
 world accuracy: use independently labeled footage for that claim.
 The delivered 60-frame holdout uses different timestamps from the same 20

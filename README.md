@@ -252,6 +252,13 @@ failures, not only the fastest run. See [measurement definitions](docs/MEASUREME
   analysis FPS does not necessarily lower the camera's encoded/decode FPS.
 - **RTSP reconnection:** the GPU source requests periodic reconnects; CPU uses
   bounded read timeouts and retries. Validate behavior on the actual camera.
+- **Many RTSP sources fail during startup:** the replay tool waits for an actual
+  decoded frame from every publisher before printing `RTSP READY`. The GPU
+  adapter assigns distinct source IDs and allows 15 seconds of inactivity
+  before reconnecting, avoiding a reconnect loop during multi-source startup.
+- **Recording does not finalize:** the live GPU output branch receives its own
+  EOS after the measurement window. Only a finalized `mosaic.mp4` is review
+  evidence; a `mosaic.partial.mp4` from a failed run is not.
 - **No results at all:** check `native.log` for GPU errors, source reachability,
   decoded frame dimensions, and whether any camera missed startup.
 

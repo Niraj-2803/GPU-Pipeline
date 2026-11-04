@@ -18,9 +18,14 @@ __pycache__/
 local.*.json
 benchmark/
 quality/
+runs/
+logs/
+local-replay/
+replay/
 build/
 data/
 *.float32
+*.engine
 models/*.onnx
 models/*.xml
 models/*.bin

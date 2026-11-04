@@ -9,6 +9,8 @@ import socket
 import subprocess
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor
+import av
 
 sys.path.insert(0,str(pathlib.Path(__file__).resolve().parents[1]))
 from camex_pipeline.common import load_sources
@@ -74,6 +76,13 @@ try:
         published.append(dict(s,uri=url))
     time.sleep(2)
     if any(proc.poll() is not None for proc in processes):raise RuntimeError('A replay publisher failed; inspect replay logs')
+    def probe(source):
+        with av.open(source['uri'],options={'rtsp_transport':'tcp'},timeout=(5,5)) as reader:
+            frame=next(reader.decode(video=0))
+            if (frame.width,frame.height)!=(source['width'],source['height']):
+                raise RuntimeError('Unexpected replay frame dimensions')
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        list(pool.map(probe,published))
     (a.output/'sources.json').write_text(json.dumps({'schema_version':'1.0','note':'Local synthetic-file RTSP replay, not physical cameras','sources':published},indent=2))
     print('RTSP READY',a.output/'sources.json',flush=True)
     start=time.monotonic();end=start+a.seconds

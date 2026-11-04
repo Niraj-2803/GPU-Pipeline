@@ -82,6 +82,8 @@ def load_sources(path, count=None):
             row['camera_id'] = row['camera_id'][:64-len(suffix)] + suffix
         row['stream_index'] = i
         result.append(row)
+    if len({r['camera_id'] for r in result}) != len(result):
+        raise ValueError('Expanded camera IDs collide; rename the configured cameras')
     return result
 
 def percentile(values, q):

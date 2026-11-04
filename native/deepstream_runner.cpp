@@ -65,6 +65,7 @@ struct Camera {
 };
 struct State {
   GstElement* pipeline=nullptr; GMainLoop* loop=nullptr;
+  GstElement* output_entry=nullptr;
   std::mutex mutex; std::vector<Camera> cameras;
   int count=0,batch=8,cols=1,rows=1,tile_w=960,tile_h=540,input_w=1920,input_h=1080;
   int last_bucket=-1; unsigned long mosaic_frames=0,reported_mosaic=0;
@@ -411,7 +412,10 @@ static gboolean tick(gpointer data){
   }
   if(finish){
     std::cout<<"FINISH measurement stopped; finalizing output"<<std::endl;
-    if(s.output)gst_element_send_event(s.pipeline,gst_event_new_eos());else g_main_loop_quit(s.loop);
+    if(s.output && s.output_entry){
+      auto sink=gst_element_get_static_pad(s.output_entry,"sink");
+      gst_pad_send_event(sink,gst_event_new_eos());gst_object_unref(sink);
+    }else g_main_loop_quit(s.loop);
   }
   return G_SOURCE_CONTINUE;
 }
@@ -496,6 +500,7 @@ int main(int argc,char** argv){
     s.cols=int(std::ceil(std::sqrt(s.count)));s.rows=(s.count+s.cols-1)/s.cols;
     s.tile_w=std::min(960,(3840/s.cols/32)*32);s.tile_h=s.tile_w*9/16;
     auto tiler=make("nvmultistreamtiler"),convert=make("nvvideoconvert"),rgba=make("capsfilter"),osd=make("nvdsosd"),convert2=make("nvvideoconvert"),nv12=make("capsfilter");
+    s.output_entry=tiler;
     auto encoder=make("nvv4l2h264enc"),parser=make("h264parse"),mp4=make("qtmux"),sink=make("filesink");
     g_object_set(tiler,"rows",s.rows,"columns",s.cols,"width",s.cols*s.tile_w,"height",s.rows*s.tile_h,nullptr);
     auto caps=gst_caps_from_string("video/x-raw(memory:NVMM),format=RGBA");g_object_set(rgba,"caps",caps,nullptr);gst_caps_unref(caps);
@@ -505,7 +510,7 @@ int main(int argc,char** argv){
     g_object_set(sink,"location",(s.folder+"/mosaic.partial.mp4").c_str(),"sync",FALSE,"async",FALSE,nullptr);
     gst_bin_add_many(GST_BIN(s.pipeline),tiler,convert,rgba,osd,convert2,nv12,encoder,parser,mp4,sink,nullptr);
     if(!gst_element_link_many(processed,tiler,convert,rgba,osd,convert2,nv12,encoder,parser,mp4,sink,nullptr))return 3;
-    if(s.preview_fps<10){auto gate=gst_element_get_static_pad(tiler,"sink");gst_pad_add_probe(gate,GST_PAD_PROBE_TYPE_BUFFER,preview_gate,&s,nullptr);gst_object_unref(gate);}
+    {auto gate=gst_element_get_static_pad(tiler,"sink");gst_pad_add_probe(gate,GST_PAD_PROBE_TYPE_BUFFER,preview_gate,&s,nullptr);gst_object_unref(gate);}
     auto pad=gst_element_get_static_pad(tiler,"src");gst_pad_add_probe(pad,GST_PAD_PROBE_TYPE_BUFFER,mosaic,&s,nullptr);gst_object_unref(pad);
     std::cout<<"VIDEO "<<s.cols*s.tile_w<<"x"<<s.rows*s.tile_h<<" grid="<<s.cols<<"x"<<s.rows<<" target="<<s.preview_fps<<" mosaic FPS; AI target="<<s.target_fps<<" FPS; "<<(s.tracking?"person track IDs and stable colours":"person detections only")<<std::endl;
   }
@@ -516,9 +521,10 @@ int main(int argc,char** argv){
     const bool loop_files=std::getenv("CAMEX_LOOP_FILES") && std::string(std::getenv("CAMEX_LOOP_FILES"))=="1";
     g_object_set(source,"uri",s.source_uris[i].c_str(),"file-loop",!rtsp && loop_files,"disable-audio",TRUE,"drop-frame-interval",s.drop,"num-extra-surfaces",surfaces,nullptr);
     if(rtsp){
+      if(g_object_class_find_property(G_OBJECT_GET_CLASS(source),"source-id"))g_object_set(source,"source-id",i,nullptr);
       if(g_object_class_find_property(G_OBJECT_GET_CLASS(source),"select-rtp-protocol"))g_object_set(source,"select-rtp-protocol",4,nullptr);
       if(g_object_class_find_property(G_OBJECT_GET_CLASS(source),"latency"))g_object_set(source,"latency",100,nullptr);
-      if(g_object_class_find_property(G_OBJECT_GET_CLASS(source),"rtsp-reconnect-interval"))g_object_set(source,"rtsp-reconnect-interval",5,nullptr);
+      if(g_object_class_find_property(G_OBJECT_GET_CLASS(source),"rtsp-reconnect-interval"))g_object_set(source,"rtsp-reconnect-interval",15,nullptr);
       if(g_object_class_find_property(G_OBJECT_GET_CLASS(source),"rtsp-reconnect-attempts"))g_object_set(source,"rtsp-reconnect-attempts",-1,nullptr);
     }
     g_object_set(pace,"sync",TRUE,nullptr);g_object_set(queue,"max-size-buffers",2,"max-size-bytes",0,"max-size-time",guint64(0),"leaky",2,nullptr);

@@ -16,6 +16,12 @@ def test_source_expansion(tmp_path):
     assert [s['camera_id'] for s in sources]==['front-door','front-door_r2','front-door_r3']
     assert len({s['stream_index'] for s in sources})==3
 
+def test_expanded_ids_must_remain_unique(tmp_path):
+    rows=[{'camera_id':name,'uri':'test.mp4','width':1920,'height':1080,'fps':10}
+          for name in ['entrance','entrance_r2']]
+    with pytest.raises(ValueError,match='collide'):
+        load_sources(config(tmp_path,rows),3)
+
 @pytest.mark.parametrize('identifier',['bad/name','bad\nname','','x'*65])
 def test_invalid_camera(tmp_path,identifier):
     with pytest.raises(ValueError):

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CAMEX frame metadata 1.0",
+  "type": "object",
+  "required": ["schema_version", "type", "run_id", "backend", "camera_id", "frame_id", "pts_ns", "source_pts_ns", "timestamp_domain", "width", "height", "processing_ms", "tracker", "objects"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "type": {"const": "frame"},
+    "run_id": {"type": "string", "minLength": 1},
+    "backend": {"enum": ["deepstream", "openvino"]},
+    "camera_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
+    "frame_id": {"type": "integer", "minimum": 0},
+    "tracking_epoch": {"type": "integer", "minimum": 0},
+    "pts_ns": {"type": "integer", "minimum": 0},
+    "source_pts_ns": {"type": "integer", "minimum": 0},
+    "timestamp_domain": {"enum": ["media", "pipeline", "stream-relative"]},
+    "width": {"type": "integer", "minimum": 1},
+    "height": {"type": "integer", "minimum": 1},
+    "processing_ms": {"type": "number", "minimum": -1},
+    "tracker": {"enum": ["none", "nvdcf", "bytetrack"]},
+    "objects": {"type": "array", "items": {
+      "type": "object", "required": ["class_id", "label", "confidence", "track_id", "bbox_xyxy"],
+      "properties": {
+        "class_id": {"const": 0}, "label": {"const": "person"},
+        "confidence": {"type": "number", "minimum": -1, "maximum": 1},
+        "track_id": {"type": ["string", "null"]},
+        "bbox_xyxy": {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4}
+      }
+    }}
+  }
+}

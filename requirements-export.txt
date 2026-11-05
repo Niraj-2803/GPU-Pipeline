@@ -1,0 +1,5 @@
+ultralytics==8.3.40
+onnx==1.17.0
+numpy==1.26.4
+opencv-python==4.10.0.84
+# Install torch==2.5.1 from the appropriate official CPU wheel index first.

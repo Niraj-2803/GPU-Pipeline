@@ -1,0 +1,18 @@
+FROM nvcr.io/nvidia/deepstream@sha256:c11befa808af8270e8ea0d0d7cc7cabbda08a2f496ee30b95f7acba5dce81759
+COPY native /opt/camex/native
+RUN mkdir -p /opt/camex/bin /opt/camex/lib && \
+    g++ -std=c++17 -O3 -pthread /opt/camex/native/deepstream_runner.cpp \
+      -I/opt/nvidia/deepstream/deepstream/sources/includes -I/usr/local/cuda/include \
+      $(pkg-config --cflags --libs gstreamer-1.0) \
+      -L/opt/nvidia/deepstream/deepstream/lib -Wl,-rpath,/opt/nvidia/deepstream/deepstream/lib \
+      -lnvdsgst_meta -lnvds_meta -o /opt/camex/bin/deepstream_runner && \
+    g++ -std=c++17 -O3 -shared -fPIC /opt/camex/native/person_parser.cpp \
+      -I/opt/nvidia/deepstream/deepstream/sources/includes -I/usr/local/cuda/include \
+      -o /opt/camex/lib/libperson_parser.so && \
+    g++ -std=c++17 -O3 /opt/camex/native/evaluate_tensor.cpp -I/usr/local/cuda/include \
+      -L/usr/local/cuda/lib64 -Wl,-rpath,/usr/local/cuda/lib64 \
+      -lnvinfer -lcudart -o /opt/camex/bin/evaluate_tensor && \
+    g++ -std=c++17 -O3 /opt/camex/native/build_int8.cpp -I/usr/local/cuda/include \
+      -L/usr/local/cuda/lib64 -Wl,-rpath,/usr/local/cuda/lib64 \
+      -lnvinfer -lnvonnxparser -lcudart -o /opt/camex/bin/build_int8
+WORKDIR /opt/camex
